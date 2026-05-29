@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+{% block title %}대시보드{% endblock %}
+{% block page_title %}대시보드{% endblock %}
+
+{% block content %}
+
+<!-- ── Overview Stats ──────────────────────────────────────── -->
+<div class="overview-grid">
+  <div class="ov-card">
+    <div class="ov-icon green">💧</div>
+    <div>
+      <div class="ov-lbl">토양 수분</div>
+      <div class="ov-val" id="ov-moisture">32%</div>
+      <div class="ov-sub" id="ov-moisture-adc">ADC 327</div>
+    </div>
+  </div>
+  <div class="ov-card">
+    <div class="ov-icon orange">🌡️</div>
+    <div>
+      <div class="ov-lbl">온도</div>
+      <div class="ov-val" id="ov-temp">24°C</div>
+      <div class="ov-sub">실내 센서</div>
+    </div>
+  </div>
+  <div class="ov-card">
+    <div class="ov-icon red">🔬</div>
+    <div>
+      <div class="ov-lbl">진단 상태</div>
+      <div class="ov-val" style="font-size:1.3rem" id="ov-severity">위험 🔴</div>
+      <div class="ov-sub" id="ov-confidence">88.5% 신뢰도</div>
+    </div>
+  </div>
+  <div class="ov-card">
+    <div class="ov-icon blue">⏰</div>
+    <div>
+      <div class="ov-lbl">마지막 관수</div>
+      <div class="ov-val" style="font-size:1rem;letter-spacing:0" id="ov-watered">2026-05-29 16:03</div>
+      <div class="ov-sub">자동 관수</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Critical Alerts + 3-column grid ─────────────────────── -->
+<div class="card">
+  <div class="card-hd">
+    <div class="icon-box">🚨</div>
+    <h3>주요 알림</h3>
+    <a href="{{ url_for('alerts') }}" class="btn btn-ghost btn-sm" style="margin-left:auto">모두 보기 →</a>
+  </div>
+  <div class="card-bd">
+    <div class="alert-preview-item">
+      <div class="alert-dot critical"></div>
+      <div>
+        <div class="alert-preview-title">초기 잎마름병 감지</div>
+        <div class="alert-preview-desc">신뢰도 88.5%로 병해가 감지되었습니다.</div>
+      </div>
+      <div class="alert-preview-time">16:03</div>
+    </div>
+    <div class="alert-preview-item">
+      <div class="alert-dot warning"></div>
+      <div>
+        <div class="alert-preview-title">토양 수분 낮음</div>
+        <div class="alert-preview-desc">ADC 327 — 관수가 필요합니다.</div>
+      </div>
+      <div class="alert-preview-time">15:47</div>
+    </div>
+    <div class="alert-preview-item">
+      <div class="alert-dot info"></div>
+      <div>
+        <div class="alert-preview-title">자동 관수 완료</div>
+        <div class="alert-preview-desc">5초간 관수가 완료되었습니다.</div>
+      </div>
+      <div class="alert-preview-time">15:34</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 3-column cards ──────────────────────────────────────── -->
+<div class="cards-grid">
+
+  <!-- AI 진단 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="icon-box">🔬</div>
+      <h3>AI 잎 진단</h3>
+      <div class="hd-right"><span class="live-dot"></span> 5초 갱신</div>
+    </div>
+    <div class="card-bd">
+      <div class="upload-zone" id="upload-zone">
+        <div class="uz-icon">📷</div>
+        <strong>잎 사진 드래그 또는 클릭</strong>
+        <p>JPG · PNG · WEBP · 최대 16MB</p>
+      </div>
+      <input type="file" id="file-input" accept="image/*" />
+
+      <div class="preview-wrap" id="preview-wrap">
+        <img id="preview-img" alt="미리보기" />
+      </div>
+
+      <div class="diag-box" id="diag-box">
+        <div class="diag-row"><span class="lbl">질병명</span><strong id="diag-disease">—</strong></div>
+        <div class="diag-row"><span class="lbl">신뢰도</span><span class="conf-val" id="diag-conf">—</span></div>
+        <div class="diag-row"><span class="lbl">위험도</span><span class="sev-pill" id="diag-sev">—</span></div>
+      </div>
+
+      <div class="live-box">
+        <div class="live-box-label"><span class="live-dot"></span>실시간 모델 출력 (목업)</div>
+        <div class="diag-row"><span class="lbl">감지 질병</span><strong id="live-disease">로딩…</strong></div>
+        <div class="diag-row"><span class="lbl">신뢰도</span><strong id="live-conf">—</strong></div>
+        <div class="diag-row"><span class="lbl">상태</span><span class="sev-pill" id="live-sev">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토양 수분 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="icon-box">💧</div>
+      <h3>토양 수분 센서</h3>
+      <div class="hd-right"><span class="live-dot"></span> 실시간</div>
+    </div>
+    <div class="card-bd">
+      <div class="m-big">
+        <span class="m-num" id="m-adc">327</span>
+        <span class="m-unit">ADC</span>
+        <div class="m-pct">비율: <strong id="m-pct">32%</strong></div>
+      </div>
+      <div style="text-align:center;margin-bottom:14px">
+        <span class="status-badge dry" id="m-status-badge">건조 🌵</span>
+      </div>
+      <div class="gauge-track" style="margin-bottom:4px">
+        <div class="gauge-fill" id="gauge-fill" style="width:32%"></div>
+      </div>
+      <div class="gauge-labels"><span>0</span><span>512</span><span>1023</span></div>
+      <div style="margin-top:14px">
+        <div class="info-row"><span>🌵 건조 기준</span><span class="v">ADC &lt; 300</span></div>
+        <div class="info-row"><span>🌿 적정 범위</span><span class="v">300 – 699</span></div>
+        <div class="info-row"><span>💧 습함 기준</span><span class="v">ADC ≥ 700</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관수 제어 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="icon-box">🚿</div>
+      <h3>관수 제어</h3>
+    </div>
+    <div class="card-bd">
+      <div class="pump-row">
+        <div class="pump-led" id="pump-led"></div>
+        <div>
+          <div class="pump-name" id="pump-name">대기 중<span>펌프 상태</span></div>
+        </div>
+      </div>
+      <div class="logic-box">
+        <strong>관수 로직</strong>
+        🟢 정상 + 건조 → 5초 관수<br/>
+        🔴 병해 + 건조 → 2초 관수 (절수)<br/>
+        💧 습함 → 관수 없음
+      </div>
+      <button class="btn-irrigate" id="irrigate-btn">💧 지금 관수</button>
+      <div class="irrigate-msg" id="irrigate-msg"></div>
+      <div class="info-row" style="margin-bottom:10px">
+        <span>마지막 관수</span>
+        <span class="v" id="last-watered">2026-05-29 16:03</span>
+      </div>
+      <div style="font-size:.78rem;font-weight:700;color:var(--text-mid);margin-bottom:6px">최근 관수 기록</div>
+      <table class="data-table">
+        <thead><tr><th>시간</th><th>지속</th><th>사유</th></tr></thead>
+        <tbody id="irr-tbody">
+          <tr><td colspan="3" style="text-align:center;color:var(--text-light)">로딩 중…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /.cards-grid -->
+
+<!-- ── Bottom row ──────────────────────────────────────────── -->
+<div class="bottom-grid">
+  <div class="card">
+    <div class="card-hd">
+      <div class="icon-box">📈</div>
+      <h3>토양 수분 (24시간)</h3>
+      <div class="hd-right" style="margin-left:auto"><span class="live-dot"></span> 30초 갱신</div>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:200px">
+        <canvas id="moistureChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="icon-box">📱</div><h3>QR 코드</h3></div>
+    <div class="card-bd">
+      <div class="qr-wrap">
+        <img id="qr-img" src="" alt="QR" />
+        <p class="qr-url" id="qr-url">URL 로딩 중…</p>
+        <p class="qr-hint">스마트폰으로 스캔하면<br>대시보드에 바로 접속됩니다</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Plant Hero ───────────────────────────────────────────── -->
+<div class="plant-hero">
+  <img id="hero-img" alt="식물 이미지" />
+  <div class="plant-hero-overlay">
+    <div class="hero-emoji" id="hero-emoji">🍅</div>
+    <div class="hero-info">
+      <h2 id="hero-name">토마토</h2>
+      <p  id="hero-sci">Solanum lycopersicum</p>
+      <div class="hero-status">
+        <span class="sev-pill critical" id="hero-sev">위험 🔴</span>
+        <span class="status-badge dry"  id="hero-mst">건조 🌵</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ─── Dashboard page script ─────────────────────────────────────
+let moistureChart = null;
+
+function initChart(labels, values) {
+  const ctx = document.getElementById("moistureChart").getContext("2d");
+  moistureChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "토양 수분 (ADC)",
+        data: values,
+        borderColor: "#2d8a4e",
+        backgroundColor: "rgba(45,138,78,.12)",
+        borderWidth: 2.5,
+        pointRadius: 3,
+        pointBackgroundColor: "#2d8a4e",
+        tension: 0.45,
+        fill: true,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: "rgba(0,0,0,.04)" }, ticks: { font:{size:10}, maxTicksLimit:8 } },
+        y: { min:0, max:1023, grid: { color: "rgba(0,0,0,.04)" }, ticks: { font:{size:10} } },
+      },
+    },
+  });
+}
+
+async function loadHistory() {
+  const r = await fetch("/api/history/moisture").catch(()=>null);
+  if (!r) return;
+  const d = await r.json();
+  const labels = d.map(p=>p.time), values = d.map(p=>p.value);
+  if (moistureChart) { moistureChart.data.labels=labels; moistureChart.data.datasets[0].data=values; moistureChart.update("none"); }
+  else initChart(labels, values);
+}
+
+function renderIrrHistory(h) {
+  document.getElementById("irr-tbody").innerHTML = h.map(r=>`
+    <tr>
+      <td>${r.time}</td>
+      <td>${r.duration>0 ? r.duration+"초" : "—"}</td>
+      <td>${r.reason}</td>
+    </tr>`).join("");
+}
+
+async function loadIrrHistory() {
+  const r = await fetch("/api/irrigation/history").catch(()=>null);
+  if (r) renderIrrHistory(await r.json());
+}
+
+async function pollSensor() {
+  const r = await fetch("/api/sensor").catch(()=>null);
+  if (!r) return;
+  const d = await r.json();
+
+  // Overview
+  document.getElementById("ov-moisture").textContent     = d.moisture_pct + "%";
+  document.getElementById("ov-moisture-adc").textContent = "ADC " + d.moisture;
+  document.getElementById("ov-temp").textContent         = d.temperature + "°C";
+  document.getElementById("ov-severity").textContent     = severityKr(d.severity);
+  document.getElementById("ov-confidence").textContent   = d.confidence + "% 신뢰도";
+  document.getElementById("ov-watered").textContent      = d.last_watered;
+
+  // Moisture card
+  document.getElementById("m-adc").textContent = d.moisture;
+  document.getElementById("m-pct").textContent = d.moisture_pct + "%";
+  const fill = document.getElementById("gauge-fill");
+  fill.style.width = d.moisture_pct + "%";
+  fill.style.background = moistureColor(d.moisture);
+  const sb = document.getElementById("m-status-badge");
+  sb.textContent = statusKr(d.moisture_status);
+  sb.className   = `status-badge ${d.moisture_status}`;
+
+  // Pump
+  const led = document.getElementById("pump-led");
+  led.className = `pump-led ${d.pump_on ? "on" : ""}`;
+  document.getElementById("pump-name").innerHTML = `${d.pump_on ? "작동 중" : "대기 중"}<span>펌프 상태</span>`;
+  document.getElementById("last-watered").textContent = d.last_watered;
+
+  // Live AI
+  document.getElementById("live-disease").textContent = d.label_kr;
+  document.getElementById("live-conf").textContent    = d.confidence + "%";
+  const ls = document.getElementById("live-sev");
+  ls.textContent = severityKr(d.severity); ls.className = `sev-pill ${d.severity}`;
+
+  // Hero status
+  const hs = document.getElementById("hero-sev");
+  const hm = document.getElementById("hero-mst");
+  if (hs) { hs.textContent = severityKr(d.severity); hs.className = `sev-pill ${d.severity}`; }
+  if (hm) { hm.textContent = statusKr(d.moisture_status); hm.className = `status-badge ${d.moisture_status}`; }
+}
+
+// Upload
+const fileInput  = document.getElementById("file-input");
+const uploadZone = document.getElementById("upload-zone");
+uploadZone.addEventListener("click", () => fileInput.click());
+uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
+["dragleave","drop"].forEach(ev => uploadZone.addEventListener(ev, e => {
+  e.preventDefault(); uploadZone.classList.remove("dragover");
+  if (ev === "drop" && e.dataTransfer.files[0]) handleUpload(e.dataTransfer.files[0]);
+}));
+fileInput.addEventListener("change", () => { if (fileInput.files[0]) handleUpload(fileInput.files[0]); });
+
+async function handleUpload(file) {
+  const pw = document.getElementById("preview-wrap");
+  const pi = document.getElementById("preview-img");
+  pi.src = URL.createObjectURL(file); pw.style.display = "block";
+  const db = document.getElementById("diag-box");
+  db.style.display = "none";
+  const fd = new FormData(); fd.append("file", file);
+  const r = await fetch("/api/upload", {method:"POST", body:fd}).catch(()=>null);
+  if (!r) return;
+  const d = await r.json();
+  if (d.error) { alert(d.error); return; }
+  document.getElementById("diag-disease").textContent = d.label_kr;
+  document.getElementById("diag-conf").textContent    = d.confidence + "%";
+  const ds = document.getElementById("diag-sev");
+  ds.textContent = severityKr(d.severity); ds.className = `sev-pill ${d.severity}`;
+  db.className = `diag-box severity-${d.severity}`; db.style.display = "block";
+}
+
+// Irrigate
+document.getElementById("irrigate-btn").addEventListener("click", async () => {
+  const btn = document.getElementById("irrigate-btn");
+  btn.disabled = true; btn.textContent = "처리 중…";
+  const r = await fetch("/api/irrigate", {method:"POST"}).catch(()=>null);
+  if (r) {
+    const d = await r.json();
+    renderIrrHistory(d.history);
+    document.getElementById("last-watered").textContent = d.last_watered;
+    const msg = document.getElementById("irrigate-msg");
+    msg.textContent = `${d.decision.reason} — ${d.decision.duration}초`;
+    msg.style.display = "block";
+    setTimeout(() => msg.style.display = "none", 4000);
+  }
+  btn.disabled = false; btn.textContent = "💧 지금 관수";
+});
+
+// QR
+async function loadQR() {
+  const r = await fetch("/api/qrcode").catch(()=>null);
+  if (!r) return;
+  const d = await r.json();
+  if (d.qr) { document.getElementById("qr-img").src=d.qr; document.getElementById("qr-url").textContent=d.url; }
+}
+
+// Boot
+(async () => {
+  await Promise.all([pollSensor(), loadHistory(), loadIrrHistory(), loadQR()]);
+  setInterval(pollSensor,   5_000);
+  setInterval(loadHistory, 30_000);
+})();
+</script>
+{% endblock %}

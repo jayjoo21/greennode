@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}알림{% endblock %}
+{% block page_title %}알림{% endblock %}
+
+{% block content %}
+
+<!-- ── Header row ──────────────────────────────────────────── -->
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">전체</button>
+    <button class="filter-btn" data-filter="unread">미확인</button>
+    <button class="filter-btn" data-filter="disease">질병감지</button>
+    <button class="filter-btn" data-filter="water">수분경고</button>
+  </div>
+  <button class="btn btn-ghost btn-sm" id="read-all-btn">모두 확인 표시</button>
+</div>
+
+<!-- ── Alert list ──────────────────────────────────────────── -->
+<div class="alert-list" id="alert-list">
+  {% for a in alerts %}
+  <div class="alert-item {{ a.level }}{% if not a.read %} unread{% endif %}"
+       data-type="{{ a.type }}"
+       data-read="{{ 'true' if a.read else 'false' }}"
+       id="alert-{{ a.id }}">
+
+    <div class="alert-icon">
+      {% if a.level == 'critical' %}🔴{% elif a.level == 'warning' %}🟡{% else %}🟢{% endif %}
+    </div>
+
+    <div class="alert-body">
+      <div class="alert-title">{{ a.title }}</div>
+      <div class="alert-desc">{{ a.desc }}</div>
+      <div class="alert-meta">{{ a.date }} {{ a.time }}</div>
+    </div>
+
+    {% if not a.read %}
+    <div class="alert-unread-dot"></div>
+    {% endif %}
+
+    <button class="btn-confirm"
+            data-id="{{ a.id }}"
+            {% if a.read %}disabled{% endif %}>
+      {{ '확인됨' if a.read else '확인' }}
+    </button>
+  </div>
+  {% endfor %}
+</div>
+
+{% if not alerts %}
+<div style="text-align:center;padding:60px;color:var(--text-light)">
+  <div style="font-size:3rem;margin-bottom:12px">🔔</div>
+  <div>알림이 없습니다</div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ── Filter ─────────────────────────────────────────────────────
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const f = btn.dataset.filter;
+    document.querySelectorAll(".alert-item").forEach(item => {
+      const show =
+        f === "all"
+        || (f === "unread"  && item.dataset.read === "false")
+        || (f === "disease" && item.dataset.type === "disease")
+        || (f === "water"   && item.dataset.type === "water");
+      item.style.display = show ? "flex" : "none";
+    });
+  });
+});
+
+// ── Mark single as read ────────────────────────────────────────
+document.querySelectorAll(".btn-confirm").forEach(btn => {
+  if (btn.disabled) return;
+  btn.addEventListener("click", async () => {
+    const id   = btn.dataset.id;
+    const item = btn.closest(".alert-item");
+    const r    = await fetch(`/api/alerts/${id}/read`, {method:"POST"}).catch(()=>null);
+    if (!r) return;
+    const d = await r.json();
+    item.classList.remove("unread");
+    item.dataset.read = "true";
+    btn.textContent = "확인됨"; btn.disabled = true;
+    item.querySelector(".alert-unread-dot")?.remove();
+    updateBadge(d.unread);
+  });
+});
+
+// ── Mark all as read ───────────────────────────────────────────
+document.getElementById("read-all-btn").addEventListener("click", async () => {
+  const r = await fetch("/api/alerts/read-all", {method:"POST"}).catch(()=>null);
+  if (!r) return;
+  document.querySelectorAll(".alert-item").forEach(item => {
+    item.classList.remove("unread");
+    item.dataset.read = "true";
+    item.querySelector(".alert-unread-dot")?.remove();
+    const b = item.querySelector(".btn-confirm");
+    if (b) { b.textContent="확인됨"; b.disabled=true; }
+  });
+  updateBadge(0);
+});
+
+function updateBadge(count) {
+  document.querySelectorAll(".alert-badge").forEach(b => {
+    b.textContent   = count;
+    b.style.display = count > 0 ? "flex" : "none";
+  });
+}
+</script>
+{% endblock %}

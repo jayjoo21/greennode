@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Uploads (user files)
+uploads/*
+!uploads/.gitkeep
+
+# QR cache
+static/qr/*
+!static/qr/.gitkeep
+
+# Flask / dev
+instance/
+*.log
+server.log
+server_err.log
+
+# OS
+.DS_Store
+Thumbs.db

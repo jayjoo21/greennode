@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}센서 설정{% endblock %}
+{% block page_title %}센서 설정{% endblock %}
+
+{% block content %}
+
+<div class="settings-grid">
+
+  <!-- ── Moisture Thresholds ─────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd"><div class="icon-box">💧</div><h3>수분 임계값 설정</h3></div>
+    <div class="card-bd">
+      <div class="settings-section">
+        <h4>센서 범위</h4>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>🌵 건조 임계값 (ADC &lt; X)</span>
+            <span class="slider-val" id="dry-val">{{ settings.dry_threshold }}</span>
+          </div>
+          <input type="range" min="0" max="512" value="{{ settings.dry_threshold }}" id="dry-slider" />
+          <div class="zone-preview">
+            <div class="zone-dry"  id="zp-dry"  style="flex:{{ settings.dry_threshold }}"></div>
+            <div class="zone-norm" id="zp-norm" style="flex:{{ settings.wet_threshold - settings.dry_threshold }}"></div>
+            <div class="zone-wet"  id="zp-wet"  style="flex:{{ 1023 - settings.wet_threshold }}"></div>
+          </div>
+          <div class="gauge-labels"><span>건조</span><span>적정</span><span>습함</span></div>
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>💧 습함 임계값 (ADC ≥ X)</span>
+            <span class="slider-val" id="wet-val">{{ settings.wet_threshold }}</span>
+          </div>
+          <input type="range" min="512" max="1023" value="{{ settings.wet_threshold }}" id="wet-slider" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Irrigation Settings ────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd"><div class="icon-box">🚿</div><h3>관수 설정</h3></div>
+    <div class="card-bd">
+      <div class="settings-section">
+        <h4>펌프 지속 시간</h4>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>🟢 정상 + 건조 시 관수</span>
+            <span class="slider-val" id="healthy-dur-val">{{ settings.pump_healthy_duration }}초</span>
+          </div>
+          <input type="range" min="1" max="10" value="{{ settings.pump_healthy_duration }}" id="healthy-dur-slider" />
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>🔴 병해 + 건조 시 관수 (절수)</span>
+            <span class="slider-val" id="disease-dur-val">{{ settings.pump_disease_duration }}초</span>
+          </div>
+          <input type="range" min="1" max="10" value="{{ settings.pump_disease_duration }}" id="disease-dur-slider" />
+        </div>
+
+        <div class="settings-section" style="margin-bottom:0">
+          <h4 style="margin-top:8px">자동 관수</h4>
+          <div class="toggle-row">
+            <div>
+              <div class="label">자동 관수 활성화</div>
+              <div class="sub">조건 충족 시 자동으로 펌프 작동</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="auto-toggle" {% if settings.auto_irrigation %}checked{% endif %} />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AI Model Settings ──────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd"><div class="icon-box">🤖</div><h3>AI 모델 설정</h3></div>
+    <div class="card-bd">
+      <div class="settings-section">
+        <h4>현재 모델</h4>
+        <div class="sys-info-item">
+          <div class="sys-dot ok"></div>
+          <div class="sys-label">MobileNetV2 (토마토)</div>
+          <div class="sys-val">PlantVillage</div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h4>신뢰도 임계값</h4>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>임계값 이하 → 정상으로 처리</span>
+            <span class="slider-val" id="conf-val">{{ settings.confidence_threshold }}%</span>
+          </div>
+          <input type="range" min="10" max="95" value="{{ settings.confidence_threshold }}" id="conf-slider" />
+          <div class="gauge-labels"><span>10%</span><span>50%</span><span>95%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── System Info ────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd"><div class="icon-box">🖥️</div><h3>시스템 정보</h3></div>
+    <div class="card-bd">
+      <div class="settings-section" style="margin-bottom:0">
+        <h4>디바이스 상태</h4>
+        <div class="sys-info-item">
+          <div class="sys-dot ok"></div>
+          <div class="sys-label">Raspberry Pi</div>
+          <div class="sys-val">🟢 연결됨 (목업)</div>
+        </div>
+        <div class="sys-info-item">
+          <div class="sys-dot ok"></div>
+          <div class="sys-label">토양 수분 센서</div>
+          <div class="sys-val">🟢 정상</div>
+        </div>
+        <div class="sys-info-item">
+          <div class="sys-dot ok"></div>
+          <div class="sys-label">온도 센서</div>
+          <div class="sys-val">🟢 정상</div>
+        </div>
+        <div class="sys-info-item">
+          <div class="sys-dot ok"></div>
+          <div class="sys-label">카메라 모듈</div>
+          <div class="sys-val">🟢 정상</div>
+        </div>
+        <div class="sys-info-item">
+          <div class="sys-dot err"></div>
+          <div class="sys-label">관수 펌프</div>
+          <div class="sys-val">🔴 미연결 (목업)</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div class="info-row"><span>마지막 업데이트</span><span class="v" id="sys-updated">—</span></div>
+        <div class="info-row"><span>시스템 버전</span><span class="v">GreenNode v1.0</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Save button ────────────────────────────────────────── -->
+<div style="display:flex;justify-content:flex-end;gap:10px">
+  <button class="btn btn-ghost" id="reset-btn">초기화</button>
+  <button class="btn btn-primary" id="save-btn">💾 설정 저장</button>
+</div>
+
+<div id="save-msg" style="display:none;text-align:right;font-size:.82rem;color:var(--green);margin-top:6px;animation:fadeIn .3s">
+  ✅ 설정이 저장되었습니다.
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Live slider value display
+function linkSlider(sliderId, valId, suffix="") {
+  const slider = document.getElementById(sliderId);
+  const valEl  = document.getElementById(valId);
+  slider.addEventListener("input", () => { valEl.textContent = slider.value + suffix; updateZonePreview(); });
+}
+linkSlider("dry-slider",     "dry-val",         "");
+linkSlider("wet-slider",     "wet-val",          "");
+linkSlider("healthy-dur-slider","healthy-dur-val","초");
+linkSlider("disease-dur-slider","disease-dur-val","초");
+linkSlider("conf-slider",    "conf-val",         "%");
+
+function updateZonePreview() {
+  const dry = +document.getElementById("dry-slider").value;
+  const wet = +document.getElementById("wet-slider").value;
+  document.getElementById("zp-dry").style.flex  = dry;
+  document.getElementById("zp-norm").style.flex = wet - dry;
+  document.getElementById("zp-wet").style.flex  = 1023 - wet;
+}
+
+// System time
+document.getElementById("sys-updated").textContent = new Date().toLocaleString("ko-KR");
+
+// Save
+document.getElementById("save-btn").addEventListener("click", async () => {
+  const btn = document.getElementById("save-btn");
+  btn.disabled = true; btn.textContent = "저장 중…";
+  const payload = {
+    dry_threshold:          +document.getElementById("dry-slider").value,
+    wet_threshold:          +document.getElementById("wet-slider").value,
+    pump_healthy_duration:  +document.getElementById("healthy-dur-slider").value,
+    pump_disease_duration:  +document.getElementById("disease-dur-slider").value,
+    auto_irrigation:        document.getElementById("auto-toggle").checked,
+    confidence_threshold:   +document.getElementById("conf-slider").value,
+  };
+  await fetch("/api/settings", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)}).catch(()=>null);
+  btn.disabled = false; btn.textContent = "💾 설정 저장";
+  const msg = document.getElementById("save-msg");
+  msg.style.display = "block";
+  setTimeout(()=>msg.style.display="none", 3000);
+});
+
+// Reset
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("기본값으로 초기화하시겠습니까?")) location.reload();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}GreenNode{% endblock %} — Smart Plant Monitoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- Mobile hamburger -->
+<button class="hamburger" id="hamburger">☰</button>
+<div class="sb-overlay" id="sb-overlay"></div>
+
+<!-- ════════════════════════════════════════
+     SIDEBAR
+     ════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-logo">
+    <div class="logo-mark">🌿</div>
+    <div class="logo-text">
+      <h2>GreenNode</h2>
+      <p>Smart Plant Monitoring</p>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">메인 메뉴</div>
+
+    <a href="{{ url_for('index') }}"
+       class="nav-link {% if page == 'dashboard' %}active{% endif %}">
+      <span class="ni">🏠</span> 대시보드
+    </a>
+    <a href="{{ url_for('analytics') }}"
+       class="nav-link {% if page == 'analytics' %}active{% endif %}">
+      <span class="ni">📊</span> 분석
+    </a>
+    <a href="{{ url_for('history') }}"
+       class="nav-link {% if page == 'history' %}active{% endif %}">
+      <span class="ni">📋</span> 기록
+    </a>
+
+    <div class="nav-section">시스템</div>
+
+    <a href="{{ url_for('settings') }}"
+       class="nav-link {% if page == 'settings' %}active{% endif %}">
+      <span class="ni">⚙️</span> 센서 설정
+    </a>
+    <a href="{{ url_for('alerts') }}"
+       class="nav-link {% if page == 'alerts' %}active{% endif %}">
+      <span class="ni">🔔</span> 알림
+      {% if unread_count > 0 %}
+      <span class="alert-badge">{{ unread_count }}</span>
+      {% endif %}
+    </a>
+  </nav>
+
+  <!-- Selected plant display -->
+  <div class="sidebar-plant">
+    <div class="plant-circle">
+      <span id="sb-plant-emoji">🍅</span>
+      <img id="sb-plant-img" alt="선택된 식물" />
+    </div>
+    <div class="sidebar-plant-name" id="sb-plant-name">토마토</div>
+    <span class="plant-badge supported" id="sb-plant-badge">PlantVillage AI ✅</span>
+    <button class="btn-pick-plant" id="open-plant-modal">🌱 식물 선택</button>
+  </div>
+
+</aside>
+
+<!-- ════════════════════════════════════════
+     MAIN CONTENT
+     ════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <h1>{% block page_title %}GreenNode{% endblock %}</h1>
+    <div class="topbar-right">
+      <span class="topbar-time" id="topbar-time"></span>
+      <span class="live-pill"><span class="live-dot"></span> LIVE</span>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <!-- Warning banner (shown for unsupported plants) -->
+    <div class="warn-banner" id="warn-banner">
+      ⚠️ 현재 AI 진단은 토마토 모델 기준으로 동작합니다. 추후 해당 식물 전용 모델로 업데이트 예정입니다.
+    </div>
+
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PLANT SELECTOR MODAL
+     ════════════════════════════════════════ -->
+<div class="modal-overlay" id="plant-modal">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <h2>🌿 식물 선택</h2>
+      <button class="modal-close" id="close-plant-modal">✕</button>
+    </div>
+
+    <div class="modal-sec">
+      <div class="modal-sec-title">✅ PlantVillage 지원 식물</div>
+      <div class="plant-grid" id="modal-sup"></div>
+    </div>
+
+    <div class="modal-sec">
+      <div class="modal-sec-title">⚠️ 관엽식물 (미지원)</div>
+      <div class="plant-grid" id="modal-dec"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Shared scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+
+</body>
+</html>
