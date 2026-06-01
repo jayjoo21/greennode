@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 {% block title %}기록{% endblock %}
-{% block page_title_label %}<span data-ko="기록" data-en="History">기록</span>{% endblock %}
+{% block page_title %}<span data-ko="기록" data-en="History">기록</span>{% endblock %}
 
 {% block content %}
 
 <div class="history-pair">
-
-  <!-- Calendar -->
-  <div class="card cl-green">
+  <div class="card">
     <div class="card-label" data-ko="캘린더" data-en="Calendar">캘린더</div>
     <div class="cal-nav">
       <button class="cal-nav-btn" id="cal-prev">&#9664;</button>
@@ -15,46 +13,38 @@
       <button class="cal-nav-btn" id="cal-next">&#9654;</button>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
-    <div class="day-detail" id="day-detail">
-      <h4 id="detail-title">—</h4>
-      <div id="detail-body"></div>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:.73rem;color:var(--text-2)">
+    <div class="day-detail" id="day-detail"><h4 id="det-title">—</h4><div id="det-body"></div></div>
+    <div style="display:flex;gap:10px;margin-top:10px;font-size:.72rem;color:var(--text-2)">
       <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;background:#BFDBFE;border-radius:2px;display:inline-block"></span><span data-ko="관수" data-en="Irrigation">관수</span></span>
       <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;background:#FDE68A;border-radius:2px;display:inline-block"></span><span data-ko="질병 감지" data-en="Disease">질병 감지</span></span>
     </div>
   </div>
 
-  <!-- Monthly summary -->
-  <div class="card cl-none">
+  <div class="card">
     <div class="card-label" data-ko="이번 달 요약" data-en="Monthly Summary">이번 달 요약</div>
-    <div class="threshold-row"><span data-ko="💧 총 관수 횟수" data-en="💧 Total Irrigations">💧 총 관수 횟수</span><span class="tv">10회</span></div>
-    <div class="threshold-row"><span data-ko="⚠️ 질병 감지" data-en="⚠️ Disease Detections">⚠️ 질병 감지</span><span class="tv">4회</span></div>
-    <div class="threshold-row"><span data-ko="📊 평균 수분" data-en="📊 Avg Moisture">📊 평균 수분</span><span class="tv">43%</span></div>
-    <div class="threshold-row"><span data-ko="⏱️ 평균 관수 간격" data-en="⏱️ Avg Interval">⏱️ 평균 관수 간격</span><span class="tv">7.8시간</span></div>
-    <div class="threshold-row"><span data-ko="🌡️ 평균 온도" data-en="🌡️ Avg Temperature">🌡️ 평균 온도</span><span class="tv">23.4°C</span></div>
-    <div style="margin-top:16px">
-      <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text-2);margin-bottom:10px" data-ko="질병 감지 현황" data-en="Disease Breakdown">질병 감지 현황</div>
-      <div style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
-          <span data-ko="초기잎마름병" data-en="Early Blight">초기잎마름병</span><span>3회</span>
-        </div>
-        <div class="m-bar-wrap"><div class="m-bar-fill" style="width:75%;background:var(--danger)"></div></div>
+    <div class="threshold-list">
+      <div class="threshold-row"><span data-ko="💧 총 관수" data-en="💧 Total Irrigations">💧 총 관수</span><span class="tv">10회</span></div>
+      <div class="threshold-row"><span data-ko="⚠️ 질병 감지" data-en="⚠️ Disease Detections">⚠️ 질병 감지</span><span class="tv">4회</span></div>
+      <div class="threshold-row"><span data-ko="📊 평균 수분" data-en="📊 Avg Moisture">📊 평균 수분</span><span class="tv">43%</span></div>
+      <div class="threshold-row"><span data-ko="⏱️ 평균 간격" data-en="⏱️ Avg Interval">⏱️ 평균 간격</span><span class="tv">7.8시간</span></div>
+      <div class="threshold-row"><span data-ko="🌡️ 평균 온도" data-en="🌡️ Avg Temp">🌡️ 평균 온도</span><span class="tv">23.4°C</span></div>
+    </div>
+    <div style="margin-top:14px">
+      <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2);margin-bottom:8px" data-ko="질병 현황" data-en="Disease Breakdown">질병 현황</div>
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span data-ko="초기잎마름병" data-en="Early Blight">초기잎마름병</span><span>3회</span></div>
+        <div class="gauge-track"><div class="gauge-fill" style="width:75%;background:var(--danger)"></div></div>
       </div>
       <div>
-        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
-          <span data-ko="세균점무늬" data-en="Bacterial Spot">세균점무늬</span><span>1회</span>
-        </div>
-        <div class="m-bar-wrap"><div class="m-bar-fill" style="width:25%;background:var(--warning)"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px"><span data-ko="세균점무늬" data-en="Bacterial Spot">세균점무늬</span><span>1회</span></div>
+        <div class="gauge-track"><div class="gauge-fill" style="width:25%;background:var(--caution)"></div></div>
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- Irrigation log -->
-<div class="card cl-none">
-  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+<div class="card">
+  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
     <span data-ko="관수 기록" data-en="Irrigation Log">관수 기록</span>
     <div style="display:flex;gap:8px;align-items:center">
       <input class="filter-input" type="date" id="irr-date" />
@@ -63,25 +53,23 @@
   </div>
   <div style="overflow-x:auto">
     <table class="data-table">
-      <thead>
-        <tr>
-          <th data-ko="날짜" data-en="Date">날짜</th>
-          <th data-ko="시간" data-en="Time">시간</th>
-          <th data-ko="지속" data-en="Duration">지속</th>
-          <th data-ko="사유" data-en="Reason">사유</th>
-          <th data-ko="수분(전)" data-en="Before">수분(전)</th>
-          <th data-ko="수분(후)" data-en="After">수분(후)</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th data-ko="날짜" data-en="Date">날짜</th>
+        <th data-ko="시간" data-en="Time">시간</th>
+        <th data-ko="지속" data-en="Duration">지속</th>
+        <th data-ko="사유" data-en="Reason">사유</th>
+        <th data-ko="수분(전)" data-en="Before">수분(전)</th>
+        <th data-ko="수분(후)" data-en="After">수분(후)</th>
+      </tr></thead>
       <tbody>
         {% for r in irrigation_history %}
         <tr>
           <td>{{ r.time.split(' ')[0] }}</td>
           <td>{{ r.time.split(' ')[1] if ' ' in r.time else r.time }}</td>
           <td>{{ r.duration }}초</td>
-          <td style="color:var(--text-2);font-size:.77rem">{{ r.reason }}</td>
-          <td>{{ r.moisture_before }} <small style="color:var(--text-3)">({{ "%.0f"|format(r.moisture_before/1023*100) }}%)</small></td>
-          <td>{{ r.moisture_after }}  <small style="color:var(--text-3)">({{ "%.0f"|format(r.moisture_after/1023*100) }}%)</small></td>
+          <td style="color:var(--text-2);font-size:.76rem">{{ r.reason }}</td>
+          <td>{{ r.moisture_before }} <small style="color:var(--text-2)">({{ "%.0f"|format(r.moisture_before/1023*100) }}%)</small></td>
+          <td>{{ r.moisture_after }}  <small style="color:var(--text-2)">({{ "%.0f"|format(r.moisture_after/1023*100) }}%)</small></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -89,9 +77,8 @@
   </div>
 </div>
 
-<!-- Diagnosis log -->
-<div class="card cl-none">
-  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+<div class="card">
+  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
     <span data-ko="진단 기록" data-en="Diagnosis Log">진단 기록</span>
     <div style="display:flex;gap:8px">
       <input class="filter-input" type="date" id="diag-date" />
@@ -100,16 +87,14 @@
   </div>
   <div style="overflow-x:auto">
     <table class="data-table">
-      <thead>
-        <tr>
-          <th data-ko="날짜" data-en="Date">날짜</th>
-          <th data-ko="시간" data-en="Time">시간</th>
-          <th data-ko="식물" data-en="Plant">식물</th>
-          <th data-ko="진단 결과" data-en="Result">진단 결과</th>
-          <th data-ko="신뢰도" data-en="Confidence">신뢰도</th>
-          <th data-ko="조치" data-en="Action">조치</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th data-ko="날짜" data-en="Date">날짜</th>
+        <th data-ko="시간" data-en="Time">시간</th>
+        <th data-ko="식물" data-en="Plant">식물</th>
+        <th data-ko="진단 결과" data-en="Result">진단 결과</th>
+        <th data-ko="신뢰도" data-en="Confidence">신뢰도</th>
+        <th data-ko="조치" data-en="Action">조치</th>
+      </tr></thead>
       <tbody>
         {% for d in diagnosis_history %}
         <tr>
@@ -118,7 +103,7 @@
           <td>{{ d.plant }}</td>
           <td><span class="lv-badge {{ d.level }}">{{ d.result }}</span></td>
           <td>{{ d.conf }}%</td>
-          <td style="color:var(--text-2);font-size:.77rem">{{ d.action }}</td>
+          <td style="color:var(--text-2);font-size:.76rem">{{ d.action }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -130,68 +115,47 @@
 
 {% block scripts %}
 <script>
-let calYear = new Date().getFullYear(), calMonth = new Date().getMonth() + 1, calEvents = {};
-const MO = ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
-const MO_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const DK = ["일","월","화","수","목","금","토"];
-const DE = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth()+1, calEvts={};
+const MKO=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const MEN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DKO=['일','월','화','수','목','금','토'], DEN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-async function loadCalendar(y, m) {
-  const r = await fetch(`/api/calendar?year=${y}&month=${m}`).catch(()=>null);
-  if (r) { const d = await r.json(); calEvents = d.events || {}; }
-  render(y, m);
+async function loadCal(y,m) {
+  const r=await fetch(`/api/calendar?year=${y}&month=${m}`).catch(()=>null);
+  if(r){const d=await r.json();calEvts=d.events||{};}
+  renderCal(y,m);
 }
-
-function render(y, m) {
-  const lang = localStorage.getItem("greennode-lang") || "ko";
-  document.getElementById("cal-title").textContent =
-    lang === "ko" ? `${y}년 ${MO[m-1]}` : `${MO_EN[m-1]} ${y}`;
-  const grid = document.getElementById("cal-grid");
-  grid.innerHTML = "";
-  (lang === "ko" ? DK : DE).forEach(d => {
-    const h = document.createElement("div"); h.className = "cal-head"; h.textContent = d; grid.appendChild(h);
-  });
-  const first = new Date(y, m-1, 1).getDay(), days = new Date(y, m, 0).getDate(), today = new Date();
-  for (let i=0; i<first; i++) {
-    const e = document.createElement("div"); e.className = "cal-day empty"; grid.appendChild(e);
-  }
-  for (let d=1; d<=days; d++) {
-    const ev = calEvents[String(d)] || {};
-    const isToday = today.getFullYear()===y && today.getMonth()+1===m && today.getDate()===d;
-    const cls = ["cal-day", isToday?"today":"",
-      (ev.irrigation&&ev.disease)?"has-both":ev.irrigation?"has-irr":ev.disease?"has-dis":""
-    ].filter(Boolean).join(" ");
-    const cell = document.createElement("div"); cell.className = cls;
-    cell.innerHTML = `<div class="cal-num">${d}</div><div class="cal-dots">${ev.irrigation?"<span class='cal-dot'>💧</span>":""}${ev.disease?"<span class='cal-dot'>⚠️</span>":""}</div>`;
-    cell.addEventListener("click", () => {
-      document.querySelectorAll(".cal-day").forEach(c=>c.classList.remove("selected"));
-      cell.classList.add("selected");
-      const detail = document.getElementById("day-detail");
-      document.getElementById("detail-title").textContent = lang==="ko" ? `${y}년 ${m}월 ${d}일` : `${MO_EN[m-1]} ${d}, ${y}`;
-      const items = [];
-      if (ev.irrigation) items.push(lang==="ko" ? "💧 관수 실시 — ADC 302 → 580" : "💧 Irrigated — ADC 302 → 580");
-      if (ev.disease)    items.push(lang==="ko" ? "⚠️ 초기잎마름병 감지 (88.5%)" : "⚠️ Early Blight detected (88.5%)");
-      if (!items.length) items.push(lang==="ko" ? "기록된 이벤트 없음" : "No events recorded");
-      document.getElementById("detail-body").innerHTML = items.map(i=>`<div style="padding:4px 0;border-bottom:1px solid rgba(0,0,0,.05)">${i}</div>`).join("");
-      detail.classList.add("show");
+function renderCal(y,m){
+  const lang=currentLang;
+  document.getElementById('cal-title').textContent=lang==='ko'?`${y}년 ${MKO[m-1]}`:`${MEN[m-1]} ${y}`;
+  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
+  (lang==='ko'?DKO:DEN).forEach(d=>{const h=document.createElement('div');h.className='cal-head';h.textContent=d;grid.appendChild(h);});
+  const first=new Date(y,m-1,1).getDay(), days=new Date(y,m,0).getDate(), today=new Date();
+  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
+  for(let d=1;d<=days;d++){
+    const ev=calEvts[String(d)]||{};
+    const isToday=today.getFullYear()===y&&today.getMonth()+1===m&&today.getDate()===d;
+    const cell=document.createElement('div');
+    cell.className=['cal-day',isToday?'today':'', (ev.irrigation&&ev.disease)?'has-both':ev.irrigation?'has-irr':ev.disease?'has-dis':''].filter(Boolean).join(' ');
+    cell.innerHTML=`<div class="cal-num">${d}</div><div class="cal-dots">${ev.irrigation?'<span class="cal-dot">💧</span>':''}${ev.disease?'<span class="cal-dot">⚠️</span>':''}</div>`;
+    cell.addEventListener('click',()=>{
+      document.querySelectorAll('.cal-day').forEach(c=>c.classList.remove('selected'));
+      cell.classList.add('selected');
+      const det=document.getElementById('day-detail');
+      document.getElementById('det-title').textContent=lang==='ko'?`${y}년 ${m}월 ${d}일`:`${MEN[m-1]} ${d}, ${y}`;
+      const items=[];
+      if(ev.irrigation) items.push(lang==='ko'?'💧 관수 실시':'💧 Irrigated');
+      if(ev.disease)    items.push(lang==='ko'?'⚠️ 질병 감지':'⚠️ Disease detected');
+      if(!items.length) items.push(lang==='ko'?'이벤트 없음':'No events');
+      document.getElementById('det-body').innerHTML=items.map(i=>`<div style="padding:3px 0;border-bottom:1px solid var(--border)">${i}</div>`).join('');
+      det.classList.add('show');
     });
     grid.appendChild(cell);
   }
 }
-
-document.getElementById("cal-prev").addEventListener("click", () => {
-  calMonth--; if (calMonth<1){calMonth=12;calYear--;} loadCalendar(calYear,calMonth);
-});
-document.getElementById("cal-next").addEventListener("click", () => {
-  calMonth++; if (calMonth>12){calMonth=1;calYear++;} loadCalendar(calYear,calMonth);
-});
-["irr-export","diag-export"].forEach(id => {
-  document.getElementById(id)?.addEventListener("click", () => {
-    const lang = localStorage.getItem("greennode-lang") || "ko";
-    alert(lang==="ko" ? "내보내기 기능은 실제 연동 후 활성화됩니다." : "Export is available after real data integration.");
-  });
-});
-
-loadCalendar(calYear, calMonth);
+document.getElementById('cal-prev').addEventListener('click',()=>{calMonth--;if(calMonth<1){calMonth=12;calYear--;}loadCal(calYear,calMonth);});
+document.getElementById('cal-next').addEventListener('click',()=>{calMonth++;if(calMonth>12){calMonth=1;calYear++;}loadCal(calYear,calMonth);});
+['irr-export','diag-export'].forEach(id=>document.getElementById(id)?.addEventListener('click',()=>alert(currentLang==='ko'?'내보내기는 실제 연동 후 활성화됩니다.':'Export available after real data integration.')));
+loadCal(calYear,calMonth);
 </script>
 {% endblock %}

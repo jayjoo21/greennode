@@ -1,28 +1,31 @@
 {% extends "base.html" %}
 {% block title %}대시보드{% endblock %}
-{% block page_title_label %}<span data-ko="식물 건강 대시보드" data-en="Plant Health Dashboard">식물 건강 대시보드</span>{% endblock %}
+{% block page_title %}<span data-ko="식물 건강 대시보드" data-en="Plant Health Dashboard">식물 건강 대시보드</span>{% endblock %}
 
 {% block content %}
 
-<!-- ── Hero Plant Section ─────────────────────────────────── -->
+<!-- ── Hero Section (140px) ─────────────────────────────────── -->
 <section class="hero-section">
-  <div class="hero-glow"></div>
-  <div class="hero-img-ring">
-    <div class="hero-skeleton" id="hero-skeleton"></div>
-    <span id="hero-emoji-fallback" style="font-size:4rem;position:relative;z-index:1">🍅</span>
-    <img id="hero-img" alt="plant" />
+  <div class="hero-img-wrap">
+    <div class="hero-glow"></div>
+    <div class="hero-ring">
+      <span id="hero-emoji">🍅</span>
+      <img id="hero-img" alt="plant" />
+    </div>
   </div>
-  <h2 class="hero-plant-name" id="hero-plant-name">토마토</h2>
-  <p class="hero-sci" id="hero-sci">Solanum lycopersicum</p>
+  <div class="hero-info">
+    <h2 class="hero-plant-name" id="hero-plant-name">토마토</h2>
+    <p class="hero-sci" id="hero-sci">Solanum lycopersicum</p>
+  </div>
   <div class="hero-badges">
-    <span class="hero-badge danger" id="hero-sev-badge">위험 감지</span>
+    <span class="hero-badge danger" id="hero-sev-badge">위험</span>
   </div>
 </section>
 
-<!-- ── Overview Stat Pills ───────────────────────────────── -->
-<div class="stat-pills-row">
+<!-- ── Stats Bar (72px) ──────────────────────────────────────── -->
+<div class="stats-bar">
   <div class="stat-pill">
-    <span class="sp-val" id="ov-moisture">32%</span>
+    <span class="sp-val" id="ov-moisture">33%</span>
     <span class="sp-lbl" data-ko="토양 수분" data-en="Soil Moisture">토양 수분</span>
   </div>
   <div class="stat-pill">
@@ -30,20 +33,20 @@
     <span class="sp-lbl" data-ko="온도" data-en="Temperature">온도</span>
   </div>
   <div class="stat-pill">
-    <span class="sp-val" id="ov-severity" style="font-size:18px">위험 🔴</span>
+    <span class="sp-val" id="ov-sev" style="font-size:17px">위험 🔴</span>
     <span class="sp-lbl" data-ko="진단 상태" data-en="Diagnosis">진단 상태</span>
   </div>
   <div class="stat-pill">
-    <span class="sp-val" id="ov-watered" style="font-size:13px;letter-spacing:0;font-weight:600">—</span>
+    <span class="sp-val" id="ov-watered" style="font-size:13px;font-weight:600">—</span>
     <span class="sp-lbl" data-ko="마지막 관수" data-en="Last Watered">마지막 관수</span>
   </div>
 </div>
 
-<!-- ── 3-column Cards ─────────────────────────────────────── -->
+<!-- ── 3-Column Cards ─────────────────────────────────────────── -->
 <div class="cards-grid">
 
-  <!-- AI Diagnosis -->
-  <div class="card cl-green">
+  <!-- Card 1: AI Diagnosis -->
+  <div class="card">
     <div class="card-label" data-ko="AI 잎 진단" data-en="AI Leaf Diagnosis">AI 잎 진단</div>
 
     <div class="upload-zone" id="upload-zone">
@@ -54,72 +57,75 @@
     <input type="file" id="file-input" accept="image/*" />
 
     <div class="preview-wrap" id="preview-wrap">
-      <img id="preview-img" alt="preview" />
+      <img id="preview-img" alt="" />
     </div>
 
     <div class="diag-result" id="diag-result">
       <div class="diag-row">
-        <span class="dl" data-ko="질병명" data-en="Disease">질병명</span>
-        <strong id="diag-disease">—</strong>
+        <span class="diag-lbl" data-ko="질병명" data-en="Disease">질병명</span>
+        <span class="diag-val" id="diag-disease">—</span>
       </div>
       <div class="diag-row">
-        <span class="dl" data-ko="신뢰도" data-en="Confidence">신뢰도</span>
-        <strong id="diag-conf">—</strong>
+        <span class="diag-lbl" data-ko="신뢰도" data-en="Confidence">신뢰도</span>
+        <span class="diag-val" id="diag-conf">—</span>
       </div>
       <div class="conf-bar-wrap">
-        <div class="conf-bar"><div class="conf-bar-fill" id="conf-bar-fill" style="width:0%"></div></div>
+        <div class="conf-bar"><div class="conf-fill" id="conf-fill" style="width:0%"></div></div>
       </div>
-      <div class="diag-row" style="margin-top:6px">
-        <span class="dl" data-ko="상태" data-en="Status">상태</span>
+      <div class="diag-row">
+        <span class="diag-lbl" data-ko="상태" data-en="Status">상태</span>
         <span class="sev-pill" id="diag-sev">—</span>
       </div>
     </div>
 
-    <div class="live-box">
-      <div class="live-box-label"><span class="live-dot"></span><span data-ko="실시간 (5초 갱신)" data-en="Live (5s refresh)">실시간 (5초 갱신)</span></div>
-      <div class="diag-row">
-        <span class="dl" data-ko="감지 질병" data-en="Detected Disease">감지 질병</span>
-        <strong id="live-disease">—</strong>
+    <div class="live-box" style="flex:1">
+      <div class="live-box-label">
+        <span class="live-dot"></span>
+        <span data-ko="실시간 5초 갱신" data-en="Live 5s refresh">실시간 5초 갱신</span>
       </div>
       <div class="diag-row">
-        <span class="dl" data-ko="신뢰도" data-en="Confidence">신뢰도</span>
-        <strong id="live-conf">—</strong>
+        <span class="diag-lbl" data-ko="감지 질병" data-en="Detected Disease">감지 질병</span>
+        <span class="diag-val" id="live-disease">—</span>
       </div>
       <div class="diag-row">
-        <span class="dl" data-ko="상태" data-en="Status">상태</span>
+        <span class="diag-lbl" data-ko="신뢰도" data-en="Confidence">신뢰도</span>
+        <span class="diag-val" id="live-conf">—</span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-lbl" data-ko="상태" data-en="Status">상태</span>
         <span class="sev-pill" id="live-sev">—</span>
       </div>
     </div>
   </div>
 
-  <!-- Soil Moisture -->
-  <div class="card cl-warn">
+  <!-- Card 2: Soil Moisture -->
+  <div class="card">
     <div class="card-label" data-ko="토양 수분 센서" data-en="Soil Moisture Sensor">토양 수분 센서</div>
 
-    <div style="text-align:center;padding:4px 0 8px">
-      <span class="adc-number" id="m-adc">327</span><span class="adc-unit">ADC</span>
-      <div class="adc-pct"><span data-ko="비율" data-en="Ratio">비율</span> <strong id="m-pct">32%</strong></div>
+    <div class="m-center">
+      <span class="adc-num" id="m-adc">335</span><span class="adc-unit">ADC</span>
+      <div class="adc-pct"><span data-ko="비율" data-en="Ratio">비율</span> <strong id="m-pct">33%</strong></div>
     </div>
 
-    <div style="text-align:center;margin-bottom:10px">
+    <div style="text-align:center;margin-bottom:12px">
       <span class="status-pill dry" id="m-status">건조</span>
     </div>
 
-    <div class="m-bar-wrap">
-      <div class="m-bar-fill" id="m-bar" style="width:32%;background:#3D7A4F"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-3);margin-top:4px">
-      <span>0</span><span>512</span><span>1023</span>
+    <div class="gauge-wrap">
+      <div class="gauge-track">
+        <div class="gauge-fill" id="gauge-fill" style="width:33%;background:#3D7A4F"></div>
+      </div>
+      <div class="gauge-labels"><span>0</span><span>512</span><span>1023</span></div>
     </div>
 
-    <div style="margin-top:10px">
+    <div class="threshold-list">
       <div class="threshold-row">
         <span data-ko="🌵 건조 기준" data-en="🌵 Dry threshold">🌵 건조 기준</span>
         <span class="tv">ADC &lt; 300</span>
       </div>
       <div class="threshold-row">
         <span data-ko="🌿 적정 범위" data-en="🌿 Normal range">🌿 적정 범위</span>
-        <span class="tv">300 – 699</span>
+        <span class="tv">300–699</span>
       </div>
       <div class="threshold-row">
         <span data-ko="💧 습함 기준" data-en="💧 Wet threshold">💧 습함 기준</span>
@@ -128,68 +134,67 @@
     </div>
   </div>
 
-  <!-- Irrigation -->
-  <div class="card cl-none">
+  <!-- Card 3: Irrigation Control -->
+  <div class="card">
     <div class="card-label" data-ko="관수 제어" data-en="Irrigation Control">관수 제어</div>
 
     <div class="pump-row">
       <div class="pump-led" id="pump-led"></div>
-      <div>
-        <div class="pump-text" id="pump-text"><span data-ko="대기 중" data-en="Standby">대기 중</span><span data-ko="펌프" data-en="Pump">펌프</span></div>
+      <div class="pump-text" id="pump-text">
+        <span data-ko="대기 중" data-en="Standby">대기 중</span>
+        <span data-ko="펌프" data-en="Pump">펌프</span>
       </div>
     </div>
 
-    <div class="logic-lines">
+    <div class="logic-box">
       <strong data-ko="관수 로직" data-en="Irrigation Logic">관수 로직</strong>
-      <span data-ko="🟢 정상 + 건조 → 5초 관수" data-en="🟢 Normal + Dry → 5s water">🟢 정상 + 건조 → 5초 관수</span><br/>
-      <span data-ko="🔴 병해 + 건조 → 2초 관수" data-en="🔴 Disease + Dry → 2s water">🔴 병해 + 건조 → 2초 관수</span><br/>
-      <span data-ko="💧 습함 → 관수 없음" data-en="💧 Wet → No irrigation">💧 습함 → 관수 없음</span>
+      <span data-ko="🟢 정상+건조→5초 관수" data-en="🟢 Normal+Dry→5s water">🟢 정상+건조→5초 관수</span><br/>
+      <span data-ko="🔴 병해+건조→2초 관수" data-en="🔴 Disease+Dry→2s water">🔴 병해+건조→2초 관수</span><br/>
+      <span data-ko="💧 습함→관수없음" data-en="💧 Wet→No irrigation">💧 습함→관수없음</span>
     </div>
 
-    <button class="btn-irrigate" id="irrigate-btn">
+    <button class="btn-water" id="btn-water">
       <span data-ko="💧 지금 관수" data-en="💧 Water Now">💧 지금 관수</span>
     </button>
-    <div class="irrigate-msg" id="irrigate-msg"></div>
+    <div class="water-msg" id="water-msg"></div>
 
-    <div class="last-row">
+    <div class="last-watered-row">
       <span data-ko="마지막 관수" data-en="Last Watered">마지막 관수</span>
       <span class="lv" id="last-watered">—</span>
     </div>
 
-    <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text-2);margin-bottom:6px"
-         data-ko="최근 관수 기록" data-en="Recent Log">최근 관수 기록</div>
+    <div class="irr-log-label" data-ko="최근 관수 기록" data-en="Recent Log">최근 관수 기록</div>
     <table class="data-table">
       <thead>
         <tr>
           <th data-ko="시간" data-en="Time">시간</th>
-          <th data-ko="지속" data-en="Duration">지속</th>
+          <th data-ko="지속" data-en="Dur.">지속</th>
           <th data-ko="사유" data-en="Reason">사유</th>
         </tr>
       </thead>
       <tbody id="irr-tbody">
-        <tr><td colspan="3" style="text-align:center;color:var(--text-3)">—</td></tr>
+        <tr><td colspan="3" style="text-align:center;color:var(--text-2)">—</td></tr>
       </tbody>
     </table>
   </div>
 
 </div><!-- /.cards-grid -->
 
-<!-- ── Bottom row ────────────────────────────────────────── -->
-<div class="bottom-grid">
+<!-- ── Bottom Row (scrollable) ───────────────────────────────── -->
+<div class="bottom-row" style="margin-top:14px">
 
-  <div class="card cl-green">
+  <div class="card">
     <div class="card-label" style="display:flex;align-items:center;justify-content:space-between">
       <span data-ko="토양 수분 (24시간)" data-en="Soil Moisture (24h)">토양 수분 (24시간)</span>
-      <span style="font-size:.62rem;color:var(--text-3);display:flex;align-items:center;gap:4px">
-        <span class="live-dot"></span><span data-ko="30초 갱신" data-en="30s refresh">30초 갱신</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--text-2)">
+        <span class="live-dot"></span>
+        <span data-ko="30초 갱신" data-en="30s refresh">30초 갱신</span>
       </span>
     </div>
-    <div class="chart-wrap" style="height:200px">
-      <canvas id="moistureChart"></canvas>
-    </div>
+    <div class="chart-wrap"><canvas id="moistureChart"></canvas></div>
   </div>
 
-  <div class="card cl-none">
+  <div class="card">
     <div class="card-label" data-ko="QR 코드" data-en="QR Code">QR 코드</div>
     <div class="qr-inner">
       <img id="qr-img" src="" alt="QR" />
@@ -204,175 +209,156 @@
 
 {% block scripts %}
 <script>
-// ── Dashboard sensor + chart polling ──────────────────────────
+// ─── Dashboard page script ─────────────────────────────────────
 let moistureChart = null;
-
-function initChart(labels, values) {
-  const ctx = document.getElementById("moistureChart").getContext("2d");
-  const grad = ctx.createLinearGradient(0,0,0,200);
-  grad.addColorStop(0, "rgba(61,122,79,.18)");
-  grad.addColorStop(1, "rgba(61,122,79,.0)");
-  moistureChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: "ADC", data: values,
-        borderColor: "#3D7A4F", backgroundColor: grad,
-        borderWidth: 2, tension: 0.45, fill: true,
-        pointRadius: 2.5, pointBackgroundColor: "#3D7A4F",
-      }],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      animation: { duration: 1200, easing: "easeInOutQuart" },
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: "rgba(0,0,0,.04)" }, ticks: { font:{size:10}, maxTicksLimit:8 } },
-        y: { min:0, max:1023, grid: { color: "rgba(0,0,0,.04)" }, ticks: { font:{size:10} } },
-      },
-    },
-  });
-}
-
-async function loadHistory() {
-  const r = await fetch("/api/history/moisture").catch(()=>null);
-  if (!r) return;
-  const d = await r.json();
-  const labels = d.map(p=>p.time), values = d.map(p=>p.value);
-  if (moistureChart) {
-    moistureChart.data.labels = labels;
-    moistureChart.data.datasets[0].data = values;
-    moistureChart.update("none");
-  } else initChart(labels, values);
-}
-
-function renderIrrHistory(h) {
-  document.getElementById("irr-tbody").innerHTML = h.map(r=>`
-    <tr>
-      <td>${r.time}</td>
-      <td>${r.duration > 0 ? r.duration+"초" : "—"}</td>
-      <td style="font-size:.75rem;color:var(--text-2)">${r.reason}</td>
-    </tr>`).join("");
-}
-
-async function loadIrrHistory() {
-  const r = await fetch("/api/irrigation/history").catch(()=>null);
-  if (r) renderIrrHistory(await r.json());
-}
-
-function setSevBadge(el, sev) {
-  if (!el) return;
-  el.className = `hero-badge ${sev === "critical" ? "danger" : sev === "caution" ? "warning" : "success"}`;
-}
-
 let firstLoad = true;
 
+function initChart(labels, vals) {
+  const ctx  = document.getElementById('moistureChart').getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, 180);
+  grad.addColorStop(0, 'rgba(61,122,79,.16)');
+  grad.addColorStop(1, 'rgba(61,122,79,0)');
+  moistureChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ label:'ADC', data:vals, borderColor:'#3D7A4F', backgroundColor:grad, borderWidth:2, tension:.45, fill:true, pointRadius:2.5, pointBackgroundColor:'#3D7A4F' }] },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      animation:{ duration:1200 },
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{ color:'rgba(0,0,0,.04)' }, ticks:{ font:{size:10}, maxTicksLimit:8 } },
+        y:{ min:0, max:1023, grid:{ color:'rgba(0,0,0,.04)' }, ticks:{ font:{size:10} } }
+      }
+    }
+  });
+}
+async function loadHistory() {
+  const r = await fetch('/api/history/moisture').catch(()=>null);
+  if (!r) return;
+  const d = await r.json();
+  const labels = d.map(p=>p.time), vals = d.map(p=>p.value);
+  if (moistureChart) { moistureChart.data.labels=labels; moistureChart.data.datasets[0].data=vals; moistureChart.update('none'); }
+  else initChart(labels, vals);
+}
+
+function renderIrrLog(h) {
+  const lang = currentLang;
+  document.getElementById('irr-tbody').innerHTML = h.map(r=>`<tr>
+    <td>${r.time}</td>
+    <td>${r.duration>0?r.duration+(lang==='ko'?'초':'s'):'—'}</td>
+    <td style="font-size:.73rem;color:var(--text-2)">${r.reason}</td>
+  </tr>`).join('');
+}
+async function loadIrrLog() {
+  const r = await fetch('/api/irrigation/history').catch(()=>null);
+  if (r) renderIrrLog(await r.json());
+}
+
 async function pollSensor() {
-  const r = await fetch("/api/sensor").catch(()=>null);
+  const r = await fetch('/api/sensor').catch(()=>null);
   if (!r) return;
   const d = await r.json();
 
   if (firstLoad) {
-    countUp(document.getElementById("m-adc"),     d.moisture,     "");
-    countUp(document.querySelector("#ov-moisture"), Math.round(d.moisture_pct), "%");
+    countUp(document.getElementById('m-adc'), d.moisture);
+    countUp(document.querySelector('#ov-moisture'), Math.round(d.moisture_pct), '%');
     firstLoad = false;
   } else {
-    document.getElementById("m-adc").textContent          = d.moisture;
-    document.getElementById("ov-moisture").textContent    = d.moisture_pct + "%";
+    document.getElementById('m-adc').textContent         = d.moisture;
+    document.getElementById('ov-moisture').textContent   = d.moisture_pct + '%';
   }
+  document.getElementById('m-pct').textContent   = d.moisture_pct + '%';
+  document.getElementById('ov-temp').textContent  = d.temperature + '°C';
+  document.getElementById('ov-sev').textContent   = severityKr(d.severity);
+  document.getElementById('ov-watered').textContent = d.last_watered;
 
-  document.getElementById("m-pct").textContent     = d.moisture_pct + "%";
-  document.getElementById("ov-temp").textContent   = d.temperature + "°C";
-  document.getElementById("ov-severity").textContent = severityKr(d.severity);
-  document.getElementById("ov-watered").textContent  = d.last_watered;
+  const fill = document.getElementById('gauge-fill');
+  fill.style.width      = d.moisture_pct + '%';
+  fill.style.background = moistureColor(d.moisture);
 
-  const bar = document.getElementById("m-bar");
-  bar.style.width      = d.moisture_pct + "%";
-  bar.style.background = moistureColor(d.moisture);
+  const ms = document.getElementById('m-status');
+  ms.textContent = statusKr(d.moisture_status);
+  ms.className   = `status-pill ${d.moisture_status}`;
 
-  const msb = document.getElementById("m-status");
-  msb.textContent = statusKr(d.moisture_status);
-  msb.className   = `status-pill ${d.moisture_status}`;
+  document.getElementById('pump-led').className = `pump-led ${d.pump_on?'on':''}`;
+  const pumpSpans = document.querySelectorAll('#pump-text span');
+  if (pumpSpans[0]) {
+    pumpSpans[0].textContent = currentLang==='ko'?(d.pump_on?'작동 중':'대기 중'):(d.pump_on?'Running':'Standby');
+    pumpSpans[0].dataset.ko  = d.pump_on?'작동 중':'대기 중';
+    pumpSpans[0].dataset.en  = d.pump_on?'Running':'Standby';
+  }
+  document.getElementById('last-watered').textContent = d.last_watered;
 
-  const led = document.getElementById("pump-led");
-  led.className = `pump-led ${d.pump_on ? "on" : ""}`;
-  const pumpStatusText = currentLang === "ko" ? (d.pump_on ? "작동 중" : "대기 중") : (d.pump_on ? "Running" : "Standby");
-  document.getElementById("pump-text").innerHTML =
-    `<span data-ko="${d.pump_on ? "작동 중":"대기 중"}" data-en="${d.pump_on ? "Running":"Standby"}">${pumpStatusText}</span><span style="font-weight:400;color:var(--text-2);font-size:.75rem;margin-left:4px" data-ko="펌프" data-en="Pump">${currentLang==="ko"?"펌프":"Pump"}</span>`;
-  document.getElementById("last-watered").textContent = d.last_watered;
-
-  document.getElementById("live-disease").textContent = d.label_kr;
-  document.getElementById("live-conf").textContent    = d.confidence + "%";
-  const ls = document.getElementById("live-sev");
+  document.getElementById('live-disease').textContent = d.label_kr;
+  document.getElementById('live-conf').textContent    = d.confidence + '%';
+  const ls = document.getElementById('live-sev');
   ls.textContent = severityKr(d.severity); ls.className = `sev-pill ${d.severity}`;
 
-  // Hero badge — severity only
-  const hs = document.getElementById("hero-sev-badge");
-  if (hs) { hs.textContent = severityKr(d.severity); setSevBadge(hs, d.severity); }
+  const hs = document.getElementById('hero-sev-badge');
+  if (hs) {
+    hs.textContent = severityKr(d.severity);
+    hs.className   = `hero-badge ${d.severity==='critical'?'danger':d.severity==='caution'?'caution':'success'}`;
+  }
 }
 
 // Upload
-const fileInput  = document.getElementById("file-input");
-const uploadZone = document.getElementById("upload-zone");
-uploadZone.addEventListener("click", () => fileInput.click());
-uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
-["dragleave","drop"].forEach(ev => uploadZone.addEventListener(ev, e => {
-  e.preventDefault(); uploadZone.classList.remove("dragover");
-  if (ev === "drop" && e.dataTransfer.files[0]) handleUpload(e.dataTransfer.files[0]);
+const fileInput  = document.getElementById('file-input');
+const uploadZone = document.getElementById('upload-zone');
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+['dragleave','drop'].forEach(ev => uploadZone.addEventListener(ev, e => {
+  e.preventDefault(); uploadZone.classList.remove('dragover');
+  if (ev==='drop' && e.dataTransfer.files[0]) doUpload(e.dataTransfer.files[0]);
 }));
-fileInput.addEventListener("change", () => { if (fileInput.files[0]) handleUpload(fileInput.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) doUpload(fileInput.files[0]); });
 
-async function handleUpload(file) {
-  const pw = document.getElementById("preview-wrap");
-  document.getElementById("preview-img").src = URL.createObjectURL(file);
-  pw.style.display = "block";
-  document.getElementById("diag-result").style.display = "none";
-  const fd = new FormData(); fd.append("file", file);
-  const r = await fetch("/api/upload", {method:"POST",body:fd}).catch(()=>null);
+async function doUpload(file) {
+  document.getElementById('preview-img').src = URL.createObjectURL(file);
+  document.getElementById('preview-wrap').style.display = 'block';
+  document.getElementById('diag-result').style.display = 'none';
+  const fd = new FormData(); fd.append('file', file);
+  const r = await fetch('/api/upload',{method:'POST',body:fd}).catch(()=>null);
   if (!r) return;
   const d = await r.json();
   if (d.error) { alert(d.error); return; }
-  document.getElementById("diag-disease").textContent = d.label_kr;
-  document.getElementById("diag-conf").textContent    = d.confidence + "%";
-  document.getElementById("conf-bar-fill").style.width = d.confidence + "%";
-  const ds = document.getElementById("diag-sev");
+  document.getElementById('diag-disease').textContent = d.label_kr;
+  document.getElementById('diag-conf').textContent    = d.confidence + '%';
+  document.getElementById('conf-fill').style.width    = d.confidence + '%';
+  const ds = document.getElementById('diag-sev');
   ds.textContent = severityKr(d.severity); ds.className = `sev-pill ${d.severity}`;
-  const box = document.getElementById("diag-result");
-  box.className = `diag-result sev-${d.severity}`; box.style.display = "block";
+  document.getElementById('diag-result').style.display = 'block';
 }
 
 // Irrigate
-const irrBtn = document.getElementById("irrigate-btn");
-initRipple(irrBtn);
-irrBtn.addEventListener("click", async () => {
-  irrBtn.disabled = true;
-  irrBtn.querySelector("span").textContent = "처리 중…";
-  const r = await fetch("/api/irrigate",{method:"POST"}).catch(()=>null);
+const btnWater = document.getElementById('btn-water');
+initRipple(btnWater);
+btnWater.addEventListener('click', async () => {
+  btnWater.disabled = true;
+  btnWater.querySelector('span').textContent = currentLang==='ko'?'처리 중…':'Processing…';
+  const r = await fetch('/api/irrigate',{method:'POST'}).catch(()=>null);
   if (r) {
     const d = await r.json();
-    renderIrrHistory(d.history);
-    document.getElementById("last-watered").textContent = d.last_watered;
-    const msg = document.getElementById("irrigate-msg");
-    msg.textContent = `${d.decision.reason} — ${d.decision.duration}초`;
-    msg.style.display = "block";
-    setTimeout(()=>msg.style.display="none", 4000);
+    renderIrrLog(d.history);
+    document.getElementById('last-watered').textContent = d.last_watered;
+    const msg = document.getElementById('water-msg');
+    msg.textContent = `${d.decision.reason} — ${d.decision.duration}${currentLang==='ko'?'초':'s'}`;
+    msg.style.display = 'block';
+    setTimeout(()=>msg.style.display='none', 4000);
   }
-  irrBtn.disabled = false;
-  const btnText = currentLang === "ko" ? "💧 지금 관수" : "💧 Water Now";
-  irrBtn.innerHTML = `<span data-ko="💧 지금 관수" data-en="💧 Water Now">${btnText}</span>`;
+  btnWater.disabled = false;
+  btnWater.querySelector('span').textContent = currentLang==='ko'?'💧 지금 관수':'💧 Water Now';
 });
 
 // QR
 async function loadQR() {
-  const r = await fetch("/api/qrcode").catch(()=>null);
+  const r = await fetch('/api/qrcode').catch(()=>null);
   if (!r) return;
   const d = await r.json();
-  if (d.qr) { document.getElementById("qr-img").src=d.qr; document.getElementById("qr-url").textContent=d.url; }
+  if (d.qr) { document.getElementById('qr-img').src=d.qr; document.getElementById('qr-url').textContent=d.url; }
 }
 
 (async () => {
-  await Promise.all([pollSensor(), loadHistory(), loadIrrHistory(), loadQR()]);
+  await Promise.all([pollSensor(), loadHistory(), loadIrrLog(), loadQR()]);
   setInterval(pollSensor,   5_000);
   setInterval(loadHistory, 30_000);
 })();

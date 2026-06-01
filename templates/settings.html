@@ -1,33 +1,30 @@
 {% extends "base.html" %}
 {% block title %}센서 설정{% endblock %}
-{% block page_title_label %}<span data-ko="센서 설정" data-en="Sensor Settings">센서 설정</span>{% endblock %}
+{% block page_title %}<span data-ko="센서 설정" data-en="Sensor Settings">센서 설정</span>{% endblock %}
 
 {% block content %}
 
 <div class="settings-grid">
 
-  <!-- Moisture thresholds -->
-  <div class="card cl-green">
+  <div class="card">
     <div class="card-label" data-ko="수분 임계값 설정" data-en="Moisture Thresholds">수분 임계값 설정</div>
     <div class="settings-section">
       <h4 data-ko="센서 범위" data-en="Sensor Range">센서 범위</h4>
-
       <div class="slider-group">
         <div class="slider-label">
           <span data-ko="건조 기준값" data-en="Dry Threshold">건조 기준값</span>
           <span class="slider-val" id="dry-val">{{ settings.dry_threshold }}</span>
         </div>
         <input type="range" min="0" max="512" value="{{ settings.dry_threshold }}" id="dry-slider" />
-        <div class="zone-bar" id="zone-bar">
+        <div class="zone-bar">
           <div class="zone-dry"  id="zp-dry"  style="flex:{{ settings.dry_threshold }}"></div>
           <div class="zone-norm" id="zp-norm" style="flex:{{ settings.wet_threshold - settings.dry_threshold }}"></div>
           <div class="zone-wet"  id="zp-wet"  style="flex:{{ 1023 - settings.wet_threshold }}"></div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-3);margin-top:3px">
+        <div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-2);margin-top:2px">
           <span data-ko="건조" data-en="Dry">건조</span><span data-ko="적정" data-en="Normal">적정</span><span data-ko="습함" data-en="Wet">습함</span>
         </div>
       </div>
-
       <div class="slider-group">
         <div class="slider-label">
           <span data-ko="습함 기준값" data-en="Wet Threshold">습함 기준값</span>
@@ -38,12 +35,10 @@
     </div>
   </div>
 
-  <!-- Irrigation settings -->
-  <div class="card cl-none">
+  <div class="card">
     <div class="card-label" data-ko="관수 설정" data-en="Irrigation Settings">관수 설정</div>
     <div class="settings-section">
       <h4 data-ko="펌프 지속 시간" data-en="Pump Duration">펌프 지속 시간</h4>
-
       <div class="slider-group">
         <div class="slider-label">
           <span data-ko="정상 + 건조 시" data-en="Normal + Dry">정상 + 건조 시</span>
@@ -51,32 +46,30 @@
         </div>
         <input type="range" min="1" max="10" value="{{ settings.pump_healthy_duration }}" id="hdur-slider" />
       </div>
-
       <div class="slider-group">
         <div class="slider-label">
-          <span data-ko="병해 + 건조 시 (절수)" data-en="Disease + Dry (reduced)">병해 + 건조 시 (절수)</span>
+          <span data-ko="병해 + 건조 시" data-en="Disease + Dry">병해 + 건조 시</span>
           <span class="slider-val" id="ddur-val">{{ settings.pump_disease_duration }}초</span>
         </div>
         <input type="range" min="1" max="10" value="{{ settings.pump_disease_duration }}" id="ddur-slider" />
       </div>
     </div>
-
     <div class="settings-section" style="margin-bottom:0">
       <h4 data-ko="자동 관수" data-en="Auto Irrigation">자동 관수</h4>
       <div class="toggle-row">
-        <div><div class="tl" data-ko="자동 관수 활성화" data-en="Enable Auto Irrigation">자동 관수 활성화</div>
-          <div class="tls" data-ko="조건 충족 시 자동으로 펌프 작동" data-en="Pump activates automatically when conditions are met">조건 충족 시 자동으로 펌프 작동</div>
+        <div>
+          <div class="tl" data-ko="자동 관수 활성화" data-en="Enable Auto Irrigation">자동 관수 활성화</div>
+          <div class="tls" data-ko="조건 충족 시 자동 작동" data-en="Activates automatically when conditions are met">조건 충족 시 자동 작동</div>
         </div>
         <label class="toggle">
           <input type="checkbox" id="auto-toggle" {% if settings.auto_irrigation %}checked{% endif %} />
-          <span class="tgl-slider"></span>
+          <span class="tgl-sl"></span>
         </label>
       </div>
     </div>
   </div>
 
-  <!-- AI model -->
-  <div class="card cl-none">
+  <div class="card">
     <div class="card-label" data-ko="AI 모델 설정" data-en="AI Model Settings">AI 모델 설정</div>
     <div class="settings-section">
       <h4 data-ko="현재 모델" data-en="Current Model">현재 모델</h4>
@@ -86,7 +79,6 @@
         <div class="sys-val">PlantVillage</div>
       </div>
     </div>
-
     <div class="settings-section">
       <h4 data-ko="신뢰도 임계값" data-en="Confidence Threshold">신뢰도 임계값</h4>
       <div class="slider-group">
@@ -99,8 +91,7 @@
     </div>
   </div>
 
-  <!-- System info -->
-  <div class="card cl-none">
+  <div class="card">
     <div class="card-label" data-ko="시스템 정보" data-en="System Info">시스템 정보</div>
     <div class="settings-section" style="margin-bottom:0">
       <h4 data-ko="디바이스 상태" data-en="Device Status">디바이스 상태</h4>
@@ -109,7 +100,7 @@
       <div class="sys-item"><div class="sys-dot ok"></div><div class="sys-label" data-ko="온도 센서" data-en="Temp Sensor">온도 센서</div><div class="sys-val" data-ko="정상" data-en="OK">정상</div></div>
       <div class="sys-item"><div class="sys-dot err"></div><div class="sys-label" data-ko="관수 펌프" data-en="Water Pump">관수 펌프</div><div class="sys-val" data-ko="미연결 (목업)" data-en="Disconnected (mock)">미연결 (목업)</div></div>
     </div>
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.06)">
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
       <div class="threshold-row"><span data-ko="마지막 업데이트" data-en="Last Updated">마지막 업데이트</span><span class="tv" id="sys-time">—</span></div>
       <div class="threshold-row"><span data-ko="버전" data-en="Version">버전</span><span class="tv">GreenNode v2.0</span></div>
     </div>
@@ -117,13 +108,13 @@
 
 </div>
 
-<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+<div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:16px">
   <button class="btn btn-ghost" id="reset-btn" data-ko="초기화" data-en="Reset">초기화</button>
   <button class="btn btn-primary" id="save-btn">
     <span data-ko="💾 저장" data-en="💾 Save">💾 저장</span>
   </button>
 </div>
-<div id="save-msg" style="display:none;text-align:right;font-size:.8rem;color:var(--accent);margin-top:6px;animation:pageFadeIn .3s">
+<div id="save-msg" style="display:none;text-align:right;font-size:.8rem;color:var(--accent);margin-top:-8px;padding-bottom:16px">
   <span data-ko="✅ 설정이 저장되었습니다." data-en="✅ Settings saved.">✅ 설정이 저장되었습니다.</span>
 </div>
 
@@ -131,47 +122,45 @@
 
 {% block scripts %}
 <script>
-document.getElementById("sys-time").textContent = new Date().toLocaleString("ko-KR");
+document.getElementById('sys-time').textContent = new Date().toLocaleString('ko-KR');
 
-function linkSlider(id, valId, suffix="") {
-  const s = document.getElementById(id), v = document.getElementById(valId);
-  s.addEventListener("input", () => { v.textContent = s.value + suffix; updateZones(); });
+function link(id,valId,sfx=''){
+  const s=document.getElementById(id),v=document.getElementById(valId);
+  s.addEventListener('input',()=>{v.textContent=s.value+sfx;updateZones();});
 }
-linkSlider("dry-slider",  "dry-val",  "");
-linkSlider("wet-slider",  "wet-val",  "");
-linkSlider("hdur-slider", "hdur-val", "초");
-linkSlider("ddur-slider", "ddur-val", "초");
-linkSlider("conf-slider", "conf-val", "%");
+link('dry-slider','dry-val','');
+link('wet-slider','wet-val','');
+link('hdur-slider','hdur-val','초');
+link('ddur-slider','ddur-val','초');
+link('conf-slider','conf-val','%');
 
-function updateZones() {
-  const dry = +document.getElementById("dry-slider").value;
-  const wet = +document.getElementById("wet-slider").value;
-  document.getElementById("zp-dry").style.flex  = dry;
-  document.getElementById("zp-norm").style.flex = Math.max(0, wet - dry);
-  document.getElementById("zp-wet").style.flex  = Math.max(0, 1023 - wet);
+function updateZones(){
+  const dry=+document.getElementById('dry-slider').value;
+  const wet=+document.getElementById('wet-slider').value;
+  document.getElementById('zp-dry').style.flex=dry;
+  document.getElementById('zp-norm').style.flex=Math.max(0,wet-dry);
+  document.getElementById('zp-wet').style.flex=Math.max(0,1023-wet);
 }
 
-document.getElementById("save-btn").addEventListener("click", async () => {
-  const btn = document.getElementById("save-btn");
-  btn.disabled = true;
-  const payload = {
-    dry_threshold:         +document.getElementById("dry-slider").value,
-    wet_threshold:         +document.getElementById("wet-slider").value,
-    pump_healthy_duration: +document.getElementById("hdur-slider").value,
-    pump_disease_duration: +document.getElementById("ddur-slider").value,
-    auto_irrigation:       document.getElementById("auto-toggle").checked,
-    confidence_threshold:  +document.getElementById("conf-slider").value,
+document.getElementById('save-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('save-btn');
+  btn.disabled=true;
+  const payload={
+    dry_threshold:+document.getElementById('dry-slider').value,
+    wet_threshold:+document.getElementById('wet-slider').value,
+    pump_healthy_duration:+document.getElementById('hdur-slider').value,
+    pump_disease_duration:+document.getElementById('ddur-slider').value,
+    auto_irrigation:document.getElementById('auto-toggle').checked,
+    confidence_threshold:+document.getElementById('conf-slider').value,
   };
-  await fetch("/api/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).catch(()=>null);
-  btn.disabled = false;
-  const msg = document.getElementById("save-msg");
-  msg.style.display = "block";
-  setTimeout(()=>msg.style.display="none", 3000);
+  await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>null);
+  btn.disabled=false;
+  const msg=document.getElementById('save-msg');
+  msg.style.display='block';
+  setTimeout(()=>msg.style.display='none',3000);
 });
-
-document.getElementById("reset-btn").addEventListener("click", () => {
-  const lang = localStorage.getItem("greennode-lang")||"ko";
-  if (confirm(lang==="ko"?"기본값으로 초기화하시겠습니까?":"Reset to default values?")) location.reload();
+document.getElementById('reset-btn').addEventListener('click',()=>{
+  if(confirm(currentLang==='ko'?'기본값으로 초기화하시겠습니까?':'Reset to default values?')) location.reload();
 });
 </script>
 {% endblock %}

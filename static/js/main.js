@@ -1,310 +1,265 @@
 /* ═══════════════════════════════════════════════════════════
-   GreenNode — main.js  (shared, all pages)
+   GreenNode — main.js (complete rewrite)
    ═══════════════════════════════════════════════════════════ */
+
+// ── Language: apply IMMEDIATELY before DOM events ─────────────
+const _saved = localStorage.getItem('greennode-lang') || 'ko';
+document.documentElement.setAttribute('data-lang', _saved);
+let currentLang = _saved;
 
 // ── Plant data ────────────────────────────────────────────────
 const PLANTS = [
-  { name:"토마토",   en:"tomato",       sci:"Solanum lycopersicum",   emoji:"🍅", supported:true  },
-  { name:"감자",     en:"potato",       sci:"Solanum tuberosum",      emoji:"🥔", supported:true  },
-  { name:"고추",     en:"red pepper",   sci:"Capsicum annuum",        emoji:"🌶️", supported:true  },
-  { name:"옥수수",   en:"corn",         sci:"Zea mays",               emoji:"🌽", supported:true  },
-  { name:"포도",     en:"grape",        sci:"Vitis vinifera",         emoji:"🍇", supported:true  },
-  { name:"사과",     en:"apple",        sci:"Malus domestica",        emoji:"🍎", supported:true  },
-  { name:"복숭아",   en:"peach",        sci:"Prunus persica",         emoji:"🍑", supported:true  },
-  { name:"딸기",     en:"strawberry",   sci:"Fragaria × ananassa",    emoji:"🍓", supported:true  },
-  { name:"블루베리", en:"blueberry",    sci:"Vaccinium corymbosum",   emoji:"🫐", supported:true  },
-  { name:"오렌지",   en:"orange",       sci:"Citrus sinensis",        emoji:"🍊", supported:true  },
-  { name:"체리",     en:"cherry",       sci:"Prunus avium",           emoji:"🍒", supported:true  },
-  { name:"오이",     en:"cucumber",     sci:"Cucumis sativus",        emoji:"🥒", supported:true  },
-  { name:"호박",     en:"pumpkin",      sci:"Cucurbita maxima",       emoji:"🎃", supported:true  },
-  { name:"콩",       en:"soybean",      sci:"Glycine max",            emoji:"🌱", supported:true  },
-  { name:"몬스테라",   en:"monstera",     sci:"Monstera deliciosa",     emoji:"🌿", supported:false },
-  { name:"스킨답서스", en:"pothos",       sci:"Epipremnum aureum",      emoji:"🪴", supported:false },
-  { name:"산세베리아", en:"sansevieria",  sci:"Dracaena trifasciata",   emoji:"🌵", supported:false },
-  { name:"고무나무",   en:"rubber plant", sci:"Ficus elastica",         emoji:"🌳", supported:false },
-  { name:"선인장",     en:"cactus",       sci:"Cactaceae sp.",          emoji:"🌵", supported:false },
-  { name:"칼라데아",   en:"calathea",     sci:"Calathea orbifolia",     emoji:"🍃", supported:false },
-  { name:"대나무야자", en:"bamboo palm",  sci:"Chamaedorea seifrizii",  emoji:"🎋", supported:false },
-  { name:"필로덴드론", en:"philodendron", sci:"Philodendron sp.",       emoji:"🌿", supported:false },
+  // ✅ PlantVillage supported
+  { name:'토마토',   en:'tomato',       sci:'Solanum lycopersicum',   emoji:'🍅', ok:true  },
+  { name:'감자',     en:'potato',       sci:'Solanum tuberosum',      emoji:'🥔', ok:true  },
+  { name:'고추',     en:'red pepper',   sci:'Capsicum annuum',        emoji:'🌶️', ok:true  },
+  { name:'옥수수',   en:'corn',         sci:'Zea mays',               emoji:'🌽', ok:true  },
+  { name:'포도',     en:'grape',        sci:'Vitis vinifera',         emoji:'🍇', ok:true  },
+  { name:'사과',     en:'apple',        sci:'Malus domestica',        emoji:'🍎', ok:true  },
+  { name:'복숭아',   en:'peach',        sci:'Prunus persica',         emoji:'🍑', ok:true  },
+  { name:'딸기',     en:'strawberry',   sci:'Fragaria × ananassa',    emoji:'🍓', ok:true  },
+  { name:'블루베리', en:'blueberry',    sci:'Vaccinium corymbosum',   emoji:'🫐', ok:true  },
+  { name:'오렌지',   en:'orange',       sci:'Citrus sinensis',        emoji:'🍊', ok:true  },
+  { name:'체리',     en:'cherry',       sci:'Prunus avium',           emoji:'🍒', ok:true  },
+  { name:'오이',     en:'cucumber',     sci:'Cucumis sativus',        emoji:'🥒', ok:true  },
+  { name:'호박',     en:'pumpkin',      sci:'Cucurbita maxima',       emoji:'🎃', ok:true  },
+  { name:'콩',       en:'soybean',      sci:'Glycine max',            emoji:'🌱', ok:true  },
+  // ⚠️ Decorative
+  { name:'몬스테라',   en:'monstera',     sci:'Monstera deliciosa',     emoji:'🌿', ok:false },
+  { name:'스킨답서스', en:'pothos',       sci:'Epipremnum aureum',      emoji:'🪴', ok:false },
+  { name:'산세베리아', en:'sansevieria',  sci:'Dracaena trifasciata',   emoji:'🌵', ok:false },
+  { name:'고무나무',   en:'rubber plant', sci:'Ficus elastica',         emoji:'🌳', ok:false },
+  { name:'선인장',     en:'cactus',       sci:'Cactaceae sp.',          emoji:'🌵', ok:false },
+  { name:'칼라데아',   en:'calathea',     sci:'Calathea orbifolia',     emoji:'🍃', ok:false },
+  { name:'대나무야자', en:'bamboo palm',  sci:'Chamaedorea seifrizii',  emoji:'🎋', ok:false },
+  { name:'필로덴드론', en:'philodendron', sci:'Philodendron sp.',       emoji:'🌿', ok:false },
 ];
-
 let selectedPlant = null;
-
-function unsplashUrl(p, size = "400x400") {
-  return `https://source.unsplash.com/${size}/?${encodeURIComponent(p.en + ",plant")}`;
+function imgUrl(p, sz='80x80') {
+  return `https://source.unsplash.com/${sz}/?${encodeURIComponent(p.en+',plant')}`;
 }
 
 // ── Language system ───────────────────────────────────────────
-// Read from localStorage immediately — before any DOM event fires
-const savedLang = localStorage.getItem("greennode-lang") || "ko";
-document.documentElement.setAttribute("data-lang", savedLang);
-let currentLang = savedLang;
-
 function applyLang(lang) {
   currentLang = lang;
-  localStorage.setItem("greennode-lang", lang);
-
-  document.querySelectorAll("[data-ko]").forEach(el => {
-    const next = lang === "ko" ? el.dataset.ko : el.dataset.en;
-    if (next !== undefined) {
-      el.style.transition = "opacity .15s";
-      el.style.opacity = "0";
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        el.textContent = next;
-        el.style.opacity = "1";
-      }));
-    }
+  localStorage.setItem('greennode-lang', lang);
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.lang = lang === 'ko' ? 'ko' : 'en';
+  document.querySelectorAll('[data-ko]').forEach(el => {
+    const v = lang === 'ko' ? el.dataset.ko : el.dataset.en;
+    if (v !== undefined) el.textContent = v;
   });
-
-  // Sync HTML lang attribute
-  document.documentElement.lang = lang === "ko" ? "ko" : "en";
-
-  // Update toggle buttons
-  document.querySelectorAll(".lang-btn").forEach(b => {
-    b.classList.toggle("active", b.dataset.lang === lang);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
   });
 }
 
 function initLang() {
-  // currentLang is already set from localStorage at module load time
-  document.querySelectorAll("[data-ko]").forEach(el => {
-    const v = currentLang === "ko" ? el.dataset.ko : el.dataset.en;
-    if (v !== undefined) el.textContent = v;
-  });
-  document.querySelectorAll(".lang-btn").forEach(b => {
-    b.classList.toggle("active", b.dataset.lang === currentLang);
-  });
-  document.documentElement.lang = currentLang === "ko" ? "ko" : "en";
-  document.documentElement.setAttribute("data-lang", currentLang);
+  // Re-apply current lang (currentLang already set from top-level)
+  applyLang(currentLang);
 }
 
-function initLangToggle() {
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.addEventListener("click", () => applyLang(btn.dataset.lang));
-  });
+// ── Sidebar collapse ──────────────────────────────────────────
+let sidebarCollapsed = localStorage.getItem('gn-sidebar') === '1';
+
+function applySidebarState(sidebar, btn) {
+  sidebar.classList.toggle('collapsed', sidebarCollapsed);
+  if (btn) btn.textContent = sidebarCollapsed ? '▶' : '◀';
 }
 
-// ── Count-up animation ───────────────────────────────────────
-function countUp(el, target, suffix = "", duration = 800) {
+// ── Sidebar plant display ─────────────────────────────────────
+function updateSidebarPlant(plant) {
+  selectedPlant = plant;
+  localStorage.setItem('gn-plant', plant.name);
+
+  const nameEl  = document.getElementById('sb-plant-name');
+  const badgeEl = document.getElementById('sb-plant-badge');
+  const imgEl   = document.getElementById('sb-plant-img');
+  const emojiEl = document.getElementById('sb-plant-emoji');
+
+  if (emojiEl) emojiEl.textContent = plant.emoji;
+  if (nameEl)  nameEl.textContent  = plant.name;
+  if (badgeEl) {
+    badgeEl.textContent = plant.ok
+      ? 'PlantVillage ✅'
+      : (currentLang === 'ko' ? '관엽식물 ⚠️' : 'Decorative ⚠️');
+    badgeEl.className = `plant-badge ${plant.ok ? 'supported' : 'decorative'}`;
+  }
+  if (imgEl) {
+    imgEl.classList.remove('loaded');
+    imgEl.src = imgUrl(plant, '80x80');
+    imgEl.onload  = () => imgEl.classList.add('loaded');
+    imgEl.onerror = () => {};
+  }
+
+  // Warning banner
+  const banner = document.getElementById('warn-banner');
+  if (banner) banner.classList.toggle('show', !plant.ok);
+
+  // Hero section (dashboard only)
+  const heroImg   = document.getElementById('hero-img');
+  const heroName  = document.getElementById('hero-plant-name');
+  const heroSci   = document.getElementById('hero-sci');
+  const heroEmoji = document.getElementById('hero-emoji');
+  if (heroEmoji) heroEmoji.textContent = plant.emoji;
+  if (heroName)  heroName.textContent  = plant.name;
+  if (heroSci)   heroSci.textContent   = plant.sci;
+  if (heroImg) {
+    heroImg.classList.remove('loaded');
+    heroImg.src = imgUrl(plant, '200x200');
+    heroImg.onload  = () => heroImg.classList.add('loaded');
+    heroImg.onerror = () => {};
+  }
+}
+
+function loadSavedPlant() {
+  const saved = localStorage.getItem('gn-plant');
+  return PLANTS.find(p => p.name === saved) || PLANTS[0];
+}
+
+// ── Plant modal ───────────────────────────────────────────────
+function buildPlantGrid() {
+  const sup = document.getElementById('modal-sup');
+  const dec = document.getElementById('modal-dec');
+  if (!sup || !dec) return;
+  sup.innerHTML = '';
+  dec.innerHTML = '';
+  PLANTS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = `plant-card${p === selectedPlant ? ' selected' : ''}`;
+    btn.innerHTML = `<div class="pc-img"><span>${p.emoji}</span><img alt="${p.name}" loading="lazy"/></div><span class="pc-name">${p.name}</span>`;
+    const img = btn.querySelector('img');
+    img.src = imgUrl(p, '80x80');
+    img.onload  = () => img.classList.add('loaded');
+    img.onerror = () => {};
+    btn.addEventListener('click', () => {
+      updateSidebarPlant(p);
+      document.querySelectorAll('.plant-card').forEach(c => c.classList.remove('selected'));
+      btn.classList.add('selected');
+      setTimeout(closePlantModal, 280);
+    });
+    (p.ok ? sup : dec).appendChild(btn);
+  });
+}
+function openPlantModal()  { buildPlantGrid(); document.getElementById('plant-modal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closePlantModal() { document.getElementById('plant-modal')?.classList.remove('open'); document.body.style.overflow = ''; }
+
+// ── Count-up animation ────────────────────────────────────────
+function countUp(el, target, suffix = '', duration = 600) {
   if (!el) return;
-  const startTime = performance.now();
-  const start = 0;
+  const start = performance.now();
   function tick(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3); // cubic ease-out
-    el.textContent = Math.round(start + (target - start) * eased) + suffix;
+    const t = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(target * e) + suffix;
     if (t < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 }
 
-// ── Card stagger animation ────────────────────────────────────
+// ── Card stagger ──────────────────────────────────────────────
 function staggerCards() {
-  document.querySelectorAll(".card").forEach((card, i) => {
-    setTimeout(() => card.classList.add("card-visible"), i * 80);
+  document.querySelectorAll('.card').forEach((card, i) => {
+    setTimeout(() => card.classList.add('visible'), i * 80);
   });
 }
 
-// ── Ripple effect ─────────────────────────────────────────────
+// ── Ripple ────────────────────────────────────────────────────
 function initRipple(btn) {
   if (!btn) return;
-  btn.addEventListener("click", e => {
-    const span = document.createElement("span");
-    span.className = "ripple-effect";
+  btn.addEventListener('click', e => {
+    const span = document.createElement('span');
+    span.className = 'ripple-effect';
     const rect = btn.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    span.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    const sz   = Math.max(rect.width, rect.height);
+    span.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
     btn.appendChild(span);
-    span.addEventListener("animationend", () => span.remove());
+    span.addEventListener('animationend', () => span.remove());
   });
 }
 
-// ── Page fade-out before navigation ──────────────────────────
+// ── Page transitions ──────────────────────────────────────────
 function initPageTransitions() {
-  document.querySelectorAll("a[href]").forEach(link => {
-    if (!link.href || link.target === "_blank") return;
+  document.querySelectorAll('a[href]').forEach(link => {
     try {
-      const url = new URL(link.href);
-      if (url.hostname !== window.location.hostname) return;
+      if (new URL(link.href).hostname !== location.hostname) return;
     } catch { return; }
-    link.addEventListener("click", e => {
+    link.addEventListener('click', e => {
       e.preventDefault();
       const href = link.href;
-      document.body.classList.add("fade-out");
-      setTimeout(() => { window.location.href = href; }, 200);
+      document.body.classList.add('fade-out');
+      setTimeout(() => location.href = href, 200);
     });
   });
-}
-
-// ── Sidebar plant update ──────────────────────────────────────
-function updateSidebarPlant(plant) {
-  selectedPlant = plant;
-  savePlant(plant);
-
-  const nameEl  = document.getElementById("sb-plant-name");
-  const badgeEl = document.getElementById("sb-plant-badge");
-  const imgEl   = document.getElementById("sb-plant-img");
-  const emojiEl = document.getElementById("sb-plant-emoji");
-
-  if (emojiEl) emojiEl.textContent = plant.emoji;
-  if (nameEl)  nameEl.textContent  = plant.name;
-  if (badgeEl) {
-    const k = plant.supported
-      ? { text: "PlantVillage AI ✅", ko: "PlantVillage AI ✅", en: "PlantVillage AI ✅" }
-      : { text: "관엽식물 ⚠️",       ko: "관엽식물 ⚠️",       en: "Decorative ⚠️" };
-    badgeEl.textContent = currentLang === "ko" ? k.ko : k.en;
-    badgeEl.className = `plant-badge ${plant.supported ? "supported" : "decorative"}`;
-  }
-  if (imgEl) {
-    imgEl.classList.remove("loaded");
-    imgEl.src = unsplashUrl(plant, "200x200");
-    imgEl.onload  = () => imgEl.classList.add("loaded");
-    imgEl.onerror = () => {};
-  }
-
-  // Warning banner
-  const banner = document.getElementById("warn-banner");
-  if (banner) {
-    banner.style.display = plant.supported ? "none" : "block";
-    banner.classList.toggle("show", !plant.supported);
-  }
-
-  // Hero section (dashboard only)
-  const heroImg   = document.getElementById("hero-img");
-  const heroSkel  = document.getElementById("hero-skeleton");
-  const heroName  = document.getElementById("hero-plant-name");
-  const heroSci   = document.getElementById("hero-sci");
-  const heroEmoji = document.getElementById("hero-emoji-fallback");
-
-  if (heroEmoji) heroEmoji.textContent = plant.emoji;
-  if (heroName) heroName.textContent = plant.name;
-  if (heroSci)  heroSci.textContent  = plant.sci;
-
-  if (heroImg) {
-    if (heroSkel) heroSkel.classList.remove("gone");
-    heroImg.classList.remove("loaded");
-    heroImg.src = unsplashUrl(plant, "600x600");
-    heroImg.onload = () => {
-      heroImg.classList.add("loaded");
-      if (heroSkel) heroSkel.classList.add("gone");
-    };
-    heroImg.onerror = () => {
-      if (heroSkel) heroSkel.classList.add("gone");
-    };
-  }
-}
-
-function loadSavedPlant() {
-  const saved = localStorage.getItem("gn_plant");
-  return PLANTS.find(p => p.name === saved) || PLANTS[0];
-}
-function savePlant(p) { localStorage.setItem("gn_plant", p.name); }
-
-// ── Plant modal ───────────────────────────────────────────────
-function buildPlantGrid() {
-  const sup = document.getElementById("modal-sup");
-  const dec = document.getElementById("modal-dec");
-  if (!sup || !dec) return;
-  sup.innerHTML = "";
-  dec.innerHTML = "";
-  PLANTS.forEach(p => {
-    const card = document.createElement("button");
-    card.className = `plant-card${p === selectedPlant ? " selected" : ""}`;
-    card.innerHTML = `
-      <div class="pc-img">
-        <span>${p.emoji}</span>
-        <img alt="${p.name}" loading="lazy" />
-      </div>
-      <span class="pc-name">${p.name}</span>`;
-    const img = card.querySelector("img");
-    img.src = unsplashUrl(p, "200x200");
-    img.onload  = () => img.classList.add("loaded");
-    img.onerror = () => {};
-    card.addEventListener("click", () => {
-      updateSidebarPlant(p);
-      document.querySelectorAll(".plant-card").forEach(c => c.classList.remove("selected"));
-      card.classList.add("selected");
-      setTimeout(closePlantModal, 280);
-    });
-    (p.supported ? sup : dec).appendChild(card);
-  });
-}
-
-function openPlantModal()  {
-  buildPlantGrid();
-  document.getElementById("plant-modal").classList.add("open");
-  document.body.style.overflow = "hidden";
-}
-function closePlantModal() {
-  document.getElementById("plant-modal").classList.remove("open");
-  document.body.style.overflow = "";
 }
 
 // ── Clock ──────────────────────────────────────────────────────
 function updateClock() {
-  const el = document.getElementById("topbar-time");
+  const el = document.getElementById('topbar-time');
   if (!el) return;
-  el.textContent = new Date().toLocaleDateString("ko-KR", {
-    year:"numeric", month:"long", day:"numeric", weekday:"short", hour:"2-digit", minute:"2-digit"
+  el.textContent = new Date().toLocaleDateString('ko-KR', {
+    year:'numeric', month:'long', day:'numeric', weekday:'short', hour:'2-digit', minute:'2-digit'
   });
 }
 
 // ── Alert badge ───────────────────────────────────────────────
 async function refreshAlertBadge() {
   try {
-    const d = await (await fetch("/api/alerts/unread-count")).json();
-    document.querySelectorAll(".alert-badge").forEach(b => {
+    const d = await (await fetch('/api/alerts/unread-count')).json();
+    document.querySelectorAll('.alert-badge').forEach(b => {
       b.textContent   = d.count;
-      b.style.display = d.count > 0 ? "flex" : "none";
+      b.style.display = d.count > 0 ? 'flex' : 'none';
     });
   } catch(e) {}
 }
 
-// ── Mobile sidebar ─────────────────────────────────────────────
-function initSidebar() {
-  const sidebar  = document.getElementById("sidebar");
-  const overlay  = document.getElementById("sb-overlay");
-  const hbg      = document.getElementById("hamburger");
-  if (!sidebar) return;
-  hbg?.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
-    overlay?.classList.toggle("open");
-  });
-  overlay?.addEventListener("click", () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("open");
-  });
-}
-
 // ── Helpers (used by page scripts) ────────────────────────────
-function moistureColor(v) {
-  return v < 300 ? "#3b82f6" : v < 700 ? "#3D7A4F" : "#F0A500";
-}
-function statusKr(s) {
-  const m = {dry:["건조","Dry"], normal:["적정","Normal"], wet:["습함","Wet"]};
-  return (m[s] || [s,s])[currentLang === "ko" ? 0 : 1];
-}
-function severityKr(s) {
-  const m = {normal:["정상","Normal"], caution:["주의","Caution"], critical:["위험","Critical"]};
-  return (m[s] || [s,s])[currentLang === "ko" ? 0 : 1];
-}
+function moistureColor(v) { return v < 300 ? '#3b82f6' : v < 700 ? '#3D7A4F' : '#F0A500'; }
+function statusKr(s)  { return ({dry:['건조','Dry'], normal:['적정','Normal'], wet:['습함','Wet']}[s]||[s,s])[currentLang==='ko'?0:1]; }
+function severityKr(s){ return ({normal:['정상','Normal'], caution:['주의','Caution'], critical:['위험','Critical']}[s]||[s,s])[currentLang==='ko'?0:1]; }
 
 // ── Boot ──────────────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
+  // Language (first)
   initLang();
-  initLangToggle();
-  initSidebar();
-  initPageTransitions();
-  updateSidebarPlant(loadSavedPlant());
-  refreshAlertBadge();
-  staggerCards();
-  updateClock();
-  setInterval(updateClock,      1_000);
-  setInterval(refreshAlertBadge, 15_000);
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+  });
 
-  document.getElementById("open-plant-modal")?.addEventListener("click", openPlantModal);
-  document.getElementById("close-plant-modal")?.addEventListener("click", closePlantModal);
-  document.getElementById("plant-modal")?.addEventListener("click", e => {
+  // Sidebar collapse
+  const sidebar  = document.getElementById('sidebar');
+  const sbToggle = document.getElementById('sidebar-toggle');
+  const sbOver   = document.getElementById('sb-overlay');
+  const hamburger = document.getElementById('hamburger');
+  if (window.innerWidth < 768) sidebarCollapsed = true;
+  applySidebarState(sidebar, sbToggle);
+  sbToggle?.addEventListener('click', () => {
+    sidebarCollapsed = !sidebarCollapsed;
+    localStorage.setItem('gn-sidebar', sidebarCollapsed ? '1' : '0');
+    applySidebarState(sidebar, sbToggle);
+  });
+  hamburger?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sbOver?.classList.toggle('open');
+  });
+  sbOver?.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sbOver.classList.remove('open');
+  });
+
+  // Plant
+  updateSidebarPlant(loadSavedPlant());
+  document.getElementById('open-plant-modal')?.addEventListener('click', openPlantModal);
+  document.getElementById('close-plant-modal')?.addEventListener('click', closePlantModal);
+  document.getElementById('plant-modal')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) closePlantModal();
   });
+
+  // Shared
+  initPageTransitions();
+  staggerCards();
+  updateClock();
+  setInterval(updateClock, 1000);
+  refreshAlertBadge();
+  setInterval(refreshAlertBadge, 15_000);
 });
