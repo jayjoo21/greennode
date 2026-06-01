@@ -7,36 +7,36 @@ const _saved = localStorage.getItem('greennode-lang') || 'ko';
 document.documentElement.setAttribute('data-lang', _saved);
 let currentLang = _saved;
 
-// ── Plant data ────────────────────────────────────────────────
+// ── Plant data  (ko = Korean display, en = English display, english = Unsplash search key)
 const PLANTS = [
   // ✅ PlantVillage supported
-  { name:'토마토',   en:'tomato',       sci:'Solanum lycopersicum',   emoji:'🍅', ok:true  },
-  { name:'감자',     en:'potato',       sci:'Solanum tuberosum',      emoji:'🥔', ok:true  },
-  { name:'고추',     en:'red pepper',   sci:'Capsicum annuum',        emoji:'🌶️', ok:true  },
-  { name:'옥수수',   en:'corn',         sci:'Zea mays',               emoji:'🌽', ok:true  },
-  { name:'포도',     en:'grape',        sci:'Vitis vinifera',         emoji:'🍇', ok:true  },
-  { name:'사과',     en:'apple',        sci:'Malus domestica',        emoji:'🍎', ok:true  },
-  { name:'복숭아',   en:'peach',        sci:'Prunus persica',         emoji:'🍑', ok:true  },
-  { name:'딸기',     en:'strawberry',   sci:'Fragaria × ananassa',    emoji:'🍓', ok:true  },
-  { name:'블루베리', en:'blueberry',    sci:'Vaccinium corymbosum',   emoji:'🫐', ok:true  },
-  { name:'오렌지',   en:'orange',       sci:'Citrus sinensis',        emoji:'🍊', ok:true  },
-  { name:'체리',     en:'cherry',       sci:'Prunus avium',           emoji:'🍒', ok:true  },
-  { name:'오이',     en:'cucumber',     sci:'Cucumis sativus',        emoji:'🥒', ok:true  },
-  { name:'호박',     en:'pumpkin',      sci:'Cucurbita maxima',       emoji:'🎃', ok:true  },
-  { name:'콩',       en:'soybean',      sci:'Glycine max',            emoji:'🌱', ok:true  },
+  { ko:'토마토',   en:'Tomato',       english:'tomato',       sci:'Solanum lycopersicum',   emoji:'🍅', ok:true  },
+  { ko:'감자',     en:'Potato',       english:'potato',       sci:'Solanum tuberosum',      emoji:'🥔', ok:true  },
+  { ko:'고추',     en:'Pepper',       english:'red pepper',   sci:'Capsicum annuum',        emoji:'🌶️', ok:true  },
+  { ko:'옥수수',   en:'Corn',         english:'corn',         sci:'Zea mays',               emoji:'🌽', ok:true  },
+  { ko:'포도',     en:'Grape',        english:'grape',        sci:'Vitis vinifera',         emoji:'🍇', ok:true  },
+  { ko:'사과',     en:'Apple',        english:'apple',        sci:'Malus domestica',        emoji:'🍎', ok:true  },
+  { ko:'복숭아',   en:'Peach',        english:'peach',        sci:'Prunus persica',         emoji:'🍑', ok:true  },
+  { ko:'딸기',     en:'Strawberry',   english:'strawberry',   sci:'Fragaria × ananassa',    emoji:'🍓', ok:true  },
+  { ko:'블루베리', en:'Blueberry',    english:'blueberry',    sci:'Vaccinium corymbosum',   emoji:'🫐', ok:true  },
+  { ko:'오렌지',   en:'Orange',       english:'orange',       sci:'Citrus sinensis',        emoji:'🍊', ok:true  },
+  { ko:'체리',     en:'Cherry',       english:'cherry',       sci:'Prunus avium',           emoji:'🍒', ok:true  },
+  { ko:'오이',     en:'Cucumber',     english:'cucumber',     sci:'Cucumis sativus',        emoji:'🥒', ok:true  },
+  { ko:'호박',     en:'Pumpkin',      english:'pumpkin',      sci:'Cucurbita maxima',       emoji:'🎃', ok:true  },
+  { ko:'콩',       en:'Bean',         english:'soybean',      sci:'Glycine max',            emoji:'🌱', ok:true  },
   // ⚠️ Decorative
-  { name:'몬스테라',   en:'monstera',     sci:'Monstera deliciosa',     emoji:'🌿', ok:false },
-  { name:'스킨답서스', en:'pothos',       sci:'Epipremnum aureum',      emoji:'🪴', ok:false },
-  { name:'산세베리아', en:'sansevieria',  sci:'Dracaena trifasciata',   emoji:'🌵', ok:false },
-  { name:'고무나무',   en:'rubber plant', sci:'Ficus elastica',         emoji:'🌳', ok:false },
-  { name:'선인장',     en:'cactus',       sci:'Cactaceae sp.',          emoji:'🌵', ok:false },
-  { name:'칼라데아',   en:'calathea',     sci:'Calathea orbifolia',     emoji:'🍃', ok:false },
-  { name:'대나무야자', en:'bamboo palm',  sci:'Chamaedorea seifrizii',  emoji:'🎋', ok:false },
-  { name:'필로덴드론', en:'philodendron', sci:'Philodendron sp.',       emoji:'🌿', ok:false },
+  { ko:'몬스테라',   en:'Monstera',     english:'monstera',     sci:'Monstera deliciosa',     emoji:'🌿', ok:false },
+  { ko:'스킨답서스', en:'Pothos',       english:'pothos',       sci:'Epipremnum aureum',      emoji:'🪴', ok:false },
+  { ko:'산세베리아', en:'Sansevieria',  english:'sansevieria',  sci:'Dracaena trifasciata',   emoji:'🌵', ok:false },
+  { ko:'고무나무',   en:'Rubber Tree',  english:'rubber plant', sci:'Ficus elastica',         emoji:'🌳', ok:false },
+  { ko:'선인장',     en:'Cactus',       english:'cactus',       sci:'Cactaceae sp.',          emoji:'🌵', ok:false },
+  { ko:'칼라데아',   en:'Calathea',     english:'calathea',     sci:'Calathea orbifolia',     emoji:'🍃', ok:false },
+  { ko:'대나무야자', en:'Bamboo Palm',  english:'bamboo palm',  sci:'Chamaedorea seifrizii',  emoji:'🎋', ok:false },
+  { ko:'필로덴드론', en:'Philodendron', english:'philodendron', sci:'Philodendron sp.',       emoji:'🌿', ok:false },
 ];
 let selectedPlant = null;
 function imgUrl(p, sz='80x80') {
-  return `https://source.unsplash.com/${sz}/?${encodeURIComponent(p.en+',plant')}`;
+  return `https://source.unsplash.com/${sz}/?${encodeURIComponent(p.english+',plant')}`;
 }
 
 // ── Language system ───────────────────────────────────────────
@@ -70,7 +70,7 @@ function applySidebarState(sidebar, btn) {
 // ── Sidebar plant display ─────────────────────────────────────
 function updateSidebarPlant(plant) {
   selectedPlant = plant;
-  localStorage.setItem('gn-plant', plant.name);
+  localStorage.setItem('gn-plant', plant.ko); // save by Korean name as stable key
 
   const nameEl  = document.getElementById('sb-plant-name');
   const badgeEl = document.getElementById('sb-plant-badge');
@@ -78,11 +78,16 @@ function updateSidebarPlant(plant) {
   const emojiEl = document.getElementById('sb-plant-emoji');
 
   if (emojiEl) emojiEl.textContent = plant.emoji;
-  if (nameEl)  nameEl.textContent  = plant.name;
+  if (nameEl) {
+    // Set bilingual data attributes so applyLang() keeps plant name in sync
+    nameEl.dataset.ko = plant.ko;
+    nameEl.dataset.en = plant.en;
+    nameEl.textContent = currentLang === 'ko' ? plant.ko : plant.en;
+  }
   if (badgeEl) {
-    badgeEl.textContent = plant.ok
-      ? 'PlantVillage ✅'
-      : (currentLang === 'ko' ? '관엽식물 ⚠️' : 'Decorative ⚠️');
+    badgeEl.dataset.ko = plant.ok ? 'PlantVillage ✅' : '관엽식물 ⚠️';
+    badgeEl.dataset.en = plant.ok ? 'PlantVillage ✅' : 'Decorative ⚠️';
+    badgeEl.textContent = currentLang === 'ko' ? badgeEl.dataset.ko : badgeEl.dataset.en;
     badgeEl.className = `plant-badge ${plant.ok ? 'supported' : 'decorative'}`;
   }
   if (imgEl) {
@@ -102,7 +107,12 @@ function updateSidebarPlant(plant) {
   const heroSci   = document.getElementById('hero-sci');
   const heroEmoji = document.getElementById('hero-emoji');
   if (heroEmoji) heroEmoji.textContent = plant.emoji;
-  if (heroName)  heroName.textContent  = plant.name;
+  if (heroName) {
+    // Set bilingual data attributes — applyLang() will update on lang switch
+    heroName.dataset.ko = plant.ko;
+    heroName.dataset.en = plant.en;
+    heroName.textContent = currentLang === 'ko' ? plant.ko : plant.en;
+  }
   if (heroSci)   heroSci.textContent   = plant.sci;
   if (heroImg) {
     heroImg.classList.remove('loaded');
@@ -114,7 +124,7 @@ function updateSidebarPlant(plant) {
 
 function loadSavedPlant() {
   const saved = localStorage.getItem('gn-plant');
-  return PLANTS.find(p => p.name === saved) || PLANTS[0];
+  return PLANTS.find(p => p.ko === saved || p.en === saved) || PLANTS[0];
 }
 
 // ── Plant modal ───────────────────────────────────────────────
@@ -127,7 +137,8 @@ function buildPlantGrid() {
   PLANTS.forEach(p => {
     const btn = document.createElement('button');
     btn.className = `plant-card${p === selectedPlant ? ' selected' : ''}`;
-    btn.innerHTML = `<div class="pc-img"><span>${p.emoji}</span><img alt="${p.name}" loading="lazy"/></div><span class="pc-name">${p.name}</span>`;
+    const displayName = currentLang === 'ko' ? p.ko : p.en;
+    btn.innerHTML = `<div class="pc-img"><span>${p.emoji}</span><img alt="${displayName}" loading="lazy"/></div><span class="pc-name">${displayName}</span>`;
     const img = btn.querySelector('img');
     img.src = imgUrl(p, '80x80');
     img.onload  = () => img.classList.add('loaded');
