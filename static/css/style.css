@@ -37,6 +37,7 @@ body {
   color: var(--text-1);
   display: flex;
   min-height: 100vh;
+  line-height: 1.5;
   animation: pageFadeIn .35s var(--ease) both;
 }
 body.fade-out {
@@ -54,12 +55,12 @@ body.fade-out {
    ════════════════════════════════════════════════════════════ */
 .sidebar {
   width: var(--sidebar-w);
-  min-height: 100vh;
+  height: 100vh;
   background: var(--sidebar);
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0; left: 0; bottom: 0;
+  top: 0; left: 0;
   z-index: 200;
   transition: transform .28s var(--ease);
   overflow-y: auto;
@@ -200,8 +201,8 @@ body.fade-out {
    ════════════════════════════════════════════════════════════ */
 .main {
   margin-left: var(--sidebar-w);
-  flex: 1;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -311,12 +312,13 @@ body.fade-out {
 .card.cl-none   { border-left-color: transparent; }
 
 .card-label {
-  font-size: .65rem;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
   color: var(--text-2);
   margin-bottom: 16px;
+  line-height: 1.5;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -369,17 +371,19 @@ body.fade-out {
 .hero-img-ring img.loaded { opacity: 1; }
 
 .hero-plant-name {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 36px;
+  font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -.6px;
+  letter-spacing: -.5px;
   margin-bottom: 4px;
+  line-height: 1.2;
 }
 .hero-sci {
-  font-size: .8rem;
+  font-size: 14px;
   color: var(--text-2);
   font-style: italic;
   margin-bottom: 14px;
+  line-height: 1.5;
 }
 .hero-badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .hero-badge {
@@ -413,8 +417,8 @@ body.fade-out {
   transition: box-shadow .2s, transform .2s var(--ease);
 }
 .stat-pill:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-.sp-val  { font-size: 1.15rem; font-weight: 800; color: var(--text-1); line-height: 1.2; }
-.sp-lbl  { font-size: .62rem; text-transform: uppercase; letter-spacing: .7px; color: var(--text-2); margin-top: 2px; }
+.sp-val  { font-size: 24px; font-weight: 700; color: var(--text-1); line-height: 1.2; }
+.sp-lbl  { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-2); margin-top: 3px; }
 
 /* ════════════════════════════════════════════════════════════
    DASHBOARD GRID
@@ -457,9 +461,16 @@ body.fade-out {
 .diag-result.sev-caution  { border-color: var(--warning); background: var(--warning-light); }
 .diag-result.sev-critical { border-color: var(--danger);  background: var(--danger-light); }
 
-.diag-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-.diag-row .dl { font-size: .73rem; color: var(--text-2); }
-.conf-bar-wrap { margin-top: 6px; }
+.diag-row {
+  display: flex; justify-content: space-between; align-items: center;
+  min-height: 36px; padding: 6px 0;
+  border-bottom: 1px solid #F0F0F0;
+  line-height: 1.5;
+}
+.diag-row:last-child { border-bottom: none; }
+.diag-row .dl    { font-size: 13px; color: var(--text-2); }
+.diag-row strong { font-size: 14px; font-weight: 600; color: var(--text-1); }
+.conf-bar-wrap { margin-top: 4px; margin-bottom: 4px; }
 .conf-bar { height: 4px; background: rgba(0,0,0,.08); border-radius: 2px; overflow: hidden; }
 .conf-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .8s var(--ease); }
 
@@ -472,9 +483,9 @@ body.fade-out {
 .live-box-label { font-size: .67rem; color: var(--text-2); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
 
 /* ── Moisture ──────────────────────────────────────────────── */
-.adc-number { font-size: 5rem; font-weight: 900; color: var(--accent); line-height: 1; letter-spacing: -3px; }
-.adc-unit   { font-size: .9rem; color: var(--text-2); font-weight: 500; margin-left: 4px; }
-.adc-pct    { font-size: .8rem; color: var(--text-2); margin-top: 4px; }
+.adc-number { font-size: 64px; font-weight: 700; color: var(--text-1); line-height: 1; letter-spacing: -3px; }
+.adc-unit   { font-size: 15px; color: var(--text-2); font-weight: 500; margin-left: 4px; }
+.adc-pct    { font-size: 13px; color: var(--text-2); margin-top: 6px; line-height: 1.5; }
 .m-bar-wrap { height: 8px; background: rgba(0,0,0,.08); border-radius: 4px; overflow: hidden; margin: 14px 0; }
 .m-bar-fill { height: 100%; border-radius: 4px; transition: width 1s var(--ease), background .4s; }
 
@@ -488,19 +499,19 @@ body.fade-out {
 .status-pill.wet    { background: #EFF6FF; color: #1E40AF; }
 
 .threshold-row {
-  display: flex; justify-content: space-between;
-  font-size: .8rem; padding: 6px 0;
-  border-bottom: 1px solid rgba(0,0,0,.05);
-  color: var(--text-2);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; padding: 8px 0; min-height: 36px;
+  border-bottom: 1px solid #F0F0F0;
+  color: var(--text-2); line-height: 1.5;
 }
 .threshold-row:last-child { border: none; }
-.threshold-row .tv { font-weight: 600; color: var(--text-1); }
+.threshold-row .tv { font-weight: 600; color: var(--text-1); font-size: 13px; }
 
 /* ── Irrigation ─────────────────────────────────────────────── */
 .pump-row {
   display: flex; align-items: center; gap: 12px;
   background: #FAFAF8; border-radius: 12px;
-  padding: 12px 14px; margin-bottom: 14px;
+  padding: 14px 16px; margin-bottom: 16px;
 }
 .pump-led {
   width: 12px; height: 12px; border-radius: 50%;
@@ -510,11 +521,11 @@ body.fade-out {
 }
 .pump-led.on { background: #22c55e; animation: ledPulse 1.6s ease-in-out infinite; }
 @keyframes ledPulse {
-  0%,100%{ box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
-  50%    { box-shadow: 0 0 0 7px rgba(34,197,94,.06); }
+  0%,100%{ box-shadow: 0 0 0 4px rgba(34,197,94,.2); }
+  50%    { box-shadow: 0 0 0 8px rgba(34,197,94,.06); }
 }
-.pump-text { font-size: .88rem; font-weight: 700; color: var(--text-1); }
-.pump-text span { font-weight: 400; color: var(--text-2); font-size: .75rem; margin-left: 4px; }
+.pump-text { font-size: 14px; font-weight: 700; color: var(--text-1); line-height: 1.5; }
+.pump-text span { font-weight: 400; color: var(--text-2); font-size: 12px; margin-left: 5px; }
 
 .logic-lines { font-size: .8rem; line-height: 2; color: var(--text-2); margin-bottom: 14px; }
 .logic-lines strong { display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: .7px; color: var(--text-3); margin-bottom: 4px; }
@@ -552,10 +563,12 @@ body.fade-out {
 }
 
 .last-row {
-  display: flex; justify-content: space-between; font-size: .8rem;
-  padding: 7px 0; border-top: 1px solid rgba(0,0,0,.06); margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; min-height: 36px;
+  padding: 6px 0; border-top: 1px solid #F0F0F0; margin-bottom: 10px;
+  color: var(--text-2); line-height: 1.5;
 }
-.last-row .lv { font-weight: 600; color: var(--text-1); }
+.last-row .lv { font-weight: 600; color: var(--text-1); font-size: 13px; }
 
 /* ── Tables ─────────────────────────────────────────────────── */
 .data-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
@@ -572,13 +585,13 @@ body.fade-out {
 
 /* ── Severity pills ─────────────────────────────────────────── */
 .sev-pill {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 3px 8px; border-radius: var(--r-pill);
-  font-size: .72rem; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 16px; border-radius: var(--r-pill);
+  font-size: 14px; font-weight: 600;
 }
-.sev-pill.normal   { background: var(--accent-light); color: var(--accent); }
-.sev-pill.caution  { background: var(--warning-light); color: #92400e; }
-.sev-pill.critical { background: var(--danger-light);  color: var(--danger); }
+.sev-pill.normal   { background: #DCFCE7; color: #16A34A; }
+.sev-pill.caution  { background: #FEF9C3; color: #CA8A04; }
+.sev-pill.critical { background: #FEE2E2; color: #E5534B; }
 .lv-badge { padding: 2px 8px; border-radius: 8px; font-size: .72rem; font-weight: 700; }
 .lv-badge.critical { background: var(--danger-light);  color: var(--danger); }
 .lv-badge.warning  { background: var(--warning-light); color: #92400e; }
