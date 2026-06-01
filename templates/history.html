@@ -1,79 +1,76 @@
 {% extends "base.html" %}
 {% block title %}기록{% endblock %}
-{% block page_title %}기록{% endblock %}
+{% block page_title_label %}<span data-ko="기록" data-en="History">기록</span>{% endblock %}
 
 {% block content %}
 
-<!-- ── Calendar + Day Detail ───────────────────────────────── -->
-<div class="history-layout">
+<div class="history-pair">
 
-  <div class="card">
-    <div class="card-hd"><div class="icon-box">📅</div><h3>캘린더</h3></div>
-    <div class="card-bd">
-      <div class="cal-nav">
-        <button class="cal-nav-btn" id="cal-prev">◀</button>
-        <h3 id="cal-title">2026년 5월</h3>
-        <button class="cal-nav-btn" id="cal-next">▶</button>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <div class="day-detail" id="day-detail">
-        <h4 id="detail-title">날짜 선택</h4>
-        <div id="detail-body">캘린더에서 날짜를 선택하면 상세 정보가 표시됩니다.</div>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:.75rem;color:var(--text-mid)">
-        <span>💧 관수</span>
-        <span>⚠️ 질병 감지</span>
-        <span style="background:#eff6ff;padding:2px 6px;border-radius:4px">파란 배경: 관수</span>
-        <span style="background:#fff7ed;padding:2px 6px;border-radius:4px">주황 배경: 질병</span>
-      </div>
+  <!-- Calendar -->
+  <div class="card cl-green">
+    <div class="card-label" data-ko="캘린더" data-en="Calendar">캘린더</div>
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="cal-prev">&#9664;</button>
+      <h3 id="cal-title">2026년 6월</h3>
+      <button class="cal-nav-btn" id="cal-next">&#9654;</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="day-detail" id="day-detail">
+      <h4 id="detail-title">—</h4>
+      <div id="detail-body"></div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:.73rem;color:var(--text-2)">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;background:#BFDBFE;border-radius:2px;display:inline-block"></span><span data-ko="관수" data-en="Irrigation">관수</span></span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;background:#FDE68A;border-radius:2px;display:inline-block"></span><span data-ko="질병 감지" data-en="Disease">질병 감지</span></span>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-hd"><div class="icon-box">💡</div><h3>이번 달 요약</h3></div>
-    <div class="card-bd">
-      <div class="info-row"><span>💧 총 관수 횟수</span><span class="v">10회</span></div>
-      <div class="info-row"><span>⚠️ 질병 감지</span><span class="v">4회</span></div>
-      <div class="info-row"><span>📊 평균 수분</span><span class="v">43%</span></div>
-      <div class="info-row"><span>⏱️ 평균 관수 간격</span><span class="v">약 7.8시간</span></div>
-      <div class="info-row"><span>🌡️ 평균 온도</span><span class="v">23.4°C</span></div>
-      <div style="margin-top:16px">
-        <div style="font-size:.78rem;font-weight:700;color:var(--text-mid);margin-bottom:10px">가장 많이 감지된 질병</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div>
-            <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
-              <span>초기잎마름병</span><span>3회</span>
-            </div>
-            <div class="gauge-track"><div class="gauge-fill" style="width:75%;background:var(--danger)"></div></div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
-              <span>세균점무늬</span><span>1회</span>
-            </div>
-            <div class="gauge-track"><div class="gauge-fill" style="width:25%;background:var(--warn)"></div></div>
-          </div>
+  <!-- Monthly summary -->
+  <div class="card cl-none">
+    <div class="card-label" data-ko="이번 달 요약" data-en="Monthly Summary">이번 달 요약</div>
+    <div class="threshold-row"><span data-ko="💧 총 관수 횟수" data-en="💧 Total Irrigations">💧 총 관수 횟수</span><span class="tv">10회</span></div>
+    <div class="threshold-row"><span data-ko="⚠️ 질병 감지" data-en="⚠️ Disease Detections">⚠️ 질병 감지</span><span class="tv">4회</span></div>
+    <div class="threshold-row"><span data-ko="📊 평균 수분" data-en="📊 Avg Moisture">📊 평균 수분</span><span class="tv">43%</span></div>
+    <div class="threshold-row"><span data-ko="⏱️ 평균 관수 간격" data-en="⏱️ Avg Interval">⏱️ 평균 관수 간격</span><span class="tv">7.8시간</span></div>
+    <div class="threshold-row"><span data-ko="🌡️ 평균 온도" data-en="🌡️ Avg Temperature">🌡️ 평균 온도</span><span class="tv">23.4°C</span></div>
+    <div style="margin-top:16px">
+      <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--text-2);margin-bottom:10px" data-ko="질병 감지 현황" data-en="Disease Breakdown">질병 감지 현황</div>
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
+          <span data-ko="초기잎마름병" data-en="Early Blight">초기잎마름병</span><span>3회</span>
         </div>
+        <div class="m-bar-wrap"><div class="m-bar-fill" style="width:75%;background:var(--danger)"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px">
+          <span data-ko="세균점무늬" data-en="Bacterial Spot">세균점무늬</span><span>1회</span>
+        </div>
+        <div class="m-bar-wrap"><div class="m-bar-fill" style="width:25%;background:var(--warning)"></div></div>
       </div>
     </div>
   </div>
 
 </div>
 
-<!-- ── Irrigation Log ───────────────────────────────────────── -->
-<div class="card">
-  <div class="card-hd">
-    <div class="icon-box">🚿</div>
-    <h3>관수 기록</h3>
-    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-      <input class="filter-input" type="date" id="irr-date-filter" />
-      <button class="btn btn-ghost btn-sm" id="irr-export">📥 내보내기</button>
+<!-- Irrigation log -->
+<div class="card cl-none">
+  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <span data-ko="관수 기록" data-en="Irrigation Log">관수 기록</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input class="filter-input" type="date" id="irr-date" />
+      <button class="btn btn-ghost btn-sm" id="irr-export" data-ko="📥 내보내기" data-en="📥 Export">📥 내보내기</button>
     </div>
   </div>
-  <div class="card-bd" style="overflow-x:auto">
+  <div style="overflow-x:auto">
     <table class="data-table">
       <thead>
         <tr>
-          <th>날짜</th><th>시간</th><th>지속</th><th>사유</th><th>수분(전)</th><th>수분(후)</th>
+          <th data-ko="날짜" data-en="Date">날짜</th>
+          <th data-ko="시간" data-en="Time">시간</th>
+          <th data-ko="지속" data-en="Duration">지속</th>
+          <th data-ko="사유" data-en="Reason">사유</th>
+          <th data-ko="수분(전)" data-en="Before">수분(전)</th>
+          <th data-ko="수분(후)" data-en="After">수분(후)</th>
         </tr>
       </thead>
       <tbody>
@@ -82,9 +79,9 @@
           <td>{{ r.time.split(' ')[0] }}</td>
           <td>{{ r.time.split(' ')[1] if ' ' in r.time else r.time }}</td>
           <td>{{ r.duration }}초</td>
-          <td>{{ r.reason }}</td>
-          <td>{{ r.moisture_before }} <small style="color:var(--text-light)">({{ "%.0f"|format(r.moisture_before/1023*100) }}%)</small></td>
-          <td>{{ r.moisture_after }}  <small style="color:var(--text-light)">({{ "%.0f"|format(r.moisture_after/1023*100) }}%)</small></td>
+          <td style="color:var(--text-2);font-size:.77rem">{{ r.reason }}</td>
+          <td>{{ r.moisture_before }} <small style="color:var(--text-3)">({{ "%.0f"|format(r.moisture_before/1023*100) }}%)</small></td>
+          <td>{{ r.moisture_after }}  <small style="color:var(--text-3)">({{ "%.0f"|format(r.moisture_after/1023*100) }}%)</small></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -92,20 +89,26 @@
   </div>
 </div>
 
-<!-- ── AI Diagnosis Log ─────────────────────────────────────── -->
-<div class="card">
-  <div class="card-hd">
-    <div class="icon-box">🔬</div>
-    <h3>AI 진단 기록</h3>
-    <div style="margin-left:auto;display:flex;gap:8px">
-      <input class="filter-input" type="date" id="diag-date-filter" />
-      <button class="btn btn-ghost btn-sm" id="diag-export">📥 내보내기</button>
+<!-- Diagnosis log -->
+<div class="card cl-none">
+  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <span data-ko="진단 기록" data-en="Diagnosis Log">진단 기록</span>
+    <div style="display:flex;gap:8px">
+      <input class="filter-input" type="date" id="diag-date" />
+      <button class="btn btn-ghost btn-sm" id="diag-export" data-ko="📥 내보내기" data-en="📥 Export">📥 내보내기</button>
     </div>
   </div>
-  <div class="card-bd" style="overflow-x:auto">
+  <div style="overflow-x:auto">
     <table class="data-table">
       <thead>
-        <tr><th>날짜</th><th>시간</th><th>식물</th><th>진단 결과</th><th>신뢰도</th><th>조치</th></tr>
+        <tr>
+          <th data-ko="날짜" data-en="Date">날짜</th>
+          <th data-ko="시간" data-en="Time">시간</th>
+          <th data-ko="식물" data-en="Plant">식물</th>
+          <th data-ko="진단 결과" data-en="Result">진단 결과</th>
+          <th data-ko="신뢰도" data-en="Confidence">신뢰도</th>
+          <th data-ko="조치" data-en="Action">조치</th>
+        </tr>
       </thead>
       <tbody>
         {% for d in diagnosis_history %}
@@ -113,11 +116,9 @@
           <td>{{ d.date }}</td>
           <td>{{ d.time }}</td>
           <td>{{ d.plant }}</td>
-          <td>
-            <span class="lv-badge {{ d.level }}">{{ d.result }}</span>
-          </td>
+          <td><span class="lv-badge {{ d.level }}">{{ d.result }}</span></td>
           <td>{{ d.conf }}%</td>
-          <td>{{ d.action }}</td>
+          <td style="color:var(--text-2);font-size:.77rem">{{ d.action }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -129,96 +130,68 @@
 
 {% block scripts %}
 <script>
-// ── Calendar ───────────────────────────────────────────────────
-let calYear  = new Date().getFullYear();
-let calMonth = new Date().getMonth() + 1;
-let calEvents = {};
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth() + 1, calEvents = {};
+const MO = ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
+const MO_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DK = ["일","월","화","수","목","금","토"];
+const DE = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-const MONTHS_KR = ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
-const DAYS_KR   = ["일","월","화","수","목","금","토"];
-
-async function loadAndRenderCalendar(year, month) {
-  const r = await fetch(`/api/calendar?year=${year}&month=${month}`).catch(()=>null);
-  if (r) {
-    const d = await r.json();
-    calEvents = d.events || {};
-  }
-  renderCalendar(year, month);
+async function loadCalendar(y, m) {
+  const r = await fetch(`/api/calendar?year=${y}&month=${m}`).catch(()=>null);
+  if (r) { const d = await r.json(); calEvents = d.events || {}; }
+  render(y, m);
 }
 
-function renderCalendar(year, month) {
-  document.getElementById("cal-title").textContent = `${year}년 ${MONTHS_KR[month-1]}`;
+function render(y, m) {
+  const lang = localStorage.getItem("greennode-lang") || "ko";
+  document.getElementById("cal-title").textContent =
+    lang === "ko" ? `${y}년 ${MO[m-1]}` : `${MO_EN[m-1]} ${y}`;
   const grid = document.getElementById("cal-grid");
   grid.innerHTML = "";
-
-  // Header row
-  DAYS_KR.forEach(d => {
-    const h = document.createElement("div");
-    h.className = "cal-head"; h.textContent = d;
-    grid.appendChild(h);
+  (lang === "ko" ? DK : DE).forEach(d => {
+    const h = document.createElement("div"); h.className = "cal-head"; h.textContent = d; grid.appendChild(h);
   });
-
-  const firstDay    = new Date(year, month-1, 1).getDay();
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const today       = new Date();
-
-  for (let i=0; i<firstDay; i++) {
-    const e = document.createElement("div"); e.className="cal-day empty"; grid.appendChild(e);
+  const first = new Date(y, m-1, 1).getDay(), days = new Date(y, m, 0).getDate(), today = new Date();
+  for (let i=0; i<first; i++) {
+    const e = document.createElement("div"); e.className = "cal-day empty"; grid.appendChild(e);
   }
-
-  for (let day=1; day<=daysInMonth; day++) {
-    const evt     = calEvents[String(day)] || {};
-    const isToday = today.getFullYear()===year && today.getMonth()+1===month && today.getDate()===day;
-    const cls = ["cal-day",
-      isToday ? "today":"",
-      (evt.irrigation && evt.disease) ? "has-both" : evt.irrigation ? "has-irr" : evt.disease ? "has-dis" : "",
+  for (let d=1; d<=days; d++) {
+    const ev = calEvents[String(d)] || {};
+    const isToday = today.getFullYear()===y && today.getMonth()+1===m && today.getDate()===d;
+    const cls = ["cal-day", isToday?"today":"",
+      (ev.irrigation&&ev.disease)?"has-both":ev.irrigation?"has-irr":ev.disease?"has-dis":""
     ].filter(Boolean).join(" ");
-
-    const cell = document.createElement("div");
-    cell.className = cls;
-    cell.innerHTML = `
-      <div class="cal-num">${day}</div>
-      <div class="cal-dots">
-        ${evt.irrigation ? '<span class="cal-dot">💧</span>' : ''}
-        ${evt.disease    ? '<span class="cal-dot">⚠️</span>' : ''}
-      </div>`;
-
+    const cell = document.createElement("div"); cell.className = cls;
+    cell.innerHTML = `<div class="cal-num">${d}</div><div class="cal-dots">${ev.irrigation?"<span class='cal-dot'>💧</span>":""}${ev.disease?"<span class='cal-dot'>⚠️</span>":""}</div>`;
     cell.addEventListener("click", () => {
       document.querySelectorAll(".cal-day").forEach(c=>c.classList.remove("selected"));
       cell.classList.add("selected");
-      showDayDetail(year, month, day, evt);
+      const detail = document.getElementById("day-detail");
+      document.getElementById("detail-title").textContent = lang==="ko" ? `${y}년 ${m}월 ${d}일` : `${MO_EN[m-1]} ${d}, ${y}`;
+      const items = [];
+      if (ev.irrigation) items.push(lang==="ko" ? "💧 관수 실시 — ADC 302 → 580" : "💧 Irrigated — ADC 302 → 580");
+      if (ev.disease)    items.push(lang==="ko" ? "⚠️ 초기잎마름병 감지 (88.5%)" : "⚠️ Early Blight detected (88.5%)");
+      if (!items.length) items.push(lang==="ko" ? "기록된 이벤트 없음" : "No events recorded");
+      document.getElementById("detail-body").innerHTML = items.map(i=>`<div style="padding:4px 0;border-bottom:1px solid rgba(0,0,0,.05)">${i}</div>`).join("");
+      detail.classList.add("show");
     });
     grid.appendChild(cell);
   }
 }
 
-function showDayDetail(year, month, day, evt) {
-  const detail = document.getElementById("day-detail");
-  const title  = document.getElementById("detail-title");
-  const body   = document.getElementById("detail-body");
-  title.textContent = `${year}년 ${month}월 ${day}일`;
-  const items = [];
-  if (evt.irrigation) items.push("💧 관수 실시 — 5초, ADC 302 → 580");
-  if (evt.disease)    items.push("⚠️ 질병 감지 — 초기잎마름병 (신뢰도 88.5%)");
-  if (!items.length)  items.push("이 날 기록된 이벤트가 없습니다.");
-  body.innerHTML = items.map(i=>`<div style="padding:4px 0;border-bottom:1px solid var(--border)">${i}</div>`).join("");
-  detail.classList.add("show");
-}
-
 document.getElementById("cal-prev").addEventListener("click", () => {
-  calMonth--; if (calMonth<1) { calMonth=12; calYear--; }
-  loadAndRenderCalendar(calYear, calMonth);
+  calMonth--; if (calMonth<1){calMonth=12;calYear--;} loadCalendar(calYear,calMonth);
 });
 document.getElementById("cal-next").addEventListener("click", () => {
-  calMonth++; if (calMonth>12) { calMonth=1; calYear++; }
-  loadAndRenderCalendar(calYear, calMonth);
+  calMonth++; if (calMonth>12){calMonth=1;calYear++;} loadCalendar(calYear,calMonth);
 });
-
-// Export mock
 ["irr-export","diag-export"].forEach(id => {
-  document.getElementById(id)?.addEventListener("click", () => alert("내보내기 기능은 실제 연동 후 활성화됩니다."));
+  document.getElementById(id)?.addEventListener("click", () => {
+    const lang = localStorage.getItem("greennode-lang") || "ko";
+    alert(lang==="ko" ? "내보내기 기능은 실제 연동 후 활성화됩니다." : "Export is available after real data integration.");
+  });
 });
 
-loadAndRenderCalendar(calYear, calMonth);
+loadCalendar(calYear, calMonth);
 </script>
 {% endblock %}

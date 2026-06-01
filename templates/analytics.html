@@ -1,78 +1,63 @@
 {% extends "base.html" %}
 {% block title %}분석{% endblock %}
-{% block page_title %}분석{% endblock %}
+{% block page_title_label %}<span data-ko="분석" data-en="Analytics">분석</span>{% endblock %}
 
 {% block content %}
 
-<!-- ── Time range tabs ─────────────────────────────────────── -->
 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-  <h2 style="font-size:1rem;font-weight:700;color:var(--text-h)">센서 데이터 분석</h2>
-  <div class="tab-bar" id="range-tabs">
-    <button class="tab-btn active" data-range="24h">24시간</button>
-    <button class="tab-btn" data-range="7d">7일</button>
-    <button class="tab-btn" data-range="30d">30일</button>
+  <div class="pill-tabs" id="range-tabs">
+    <button class="ptab active" data-range="24h" data-ko="24시간" data-en="24h">24시간</button>
+    <button class="ptab" data-range="7d"  data-ko="7일" data-en="7d">7일</button>
+    <button class="ptab" data-range="30d" data-ko="30일" data-en="30d">30일</button>
   </div>
 </div>
 
-<!-- ── Irrigation prediction ──────────────────────────────── -->
-<div class="prediction-card">
-  <h3>💧 관수 예측</h3>
-  <div class="prediction-time" id="pred-time">약 3시간 후</div>
-  <div class="prediction-sub">현재 수분 감소 속도 기준 — 다음 관수 예상 시간</div>
-  <div class="prediction-bar"><div class="prediction-fill" id="pred-fill"></div></div>
+<!-- Prediction -->
+<div class="pred-card">
+  <h3 data-ko="관개 예측" data-en="Irrigation Prediction">관개 예측</h3>
+  <div class="pred-time" id="pred-time" data-ko="약 3시간 후" data-en="~3 hours">약 3시간 후</div>
+  <div class="pred-sub" data-ko="현재 수분 감소 속도 기준 — 다음 관수 예상 시간" data-en="Based on current moisture decline rate">현재 수분 감소 속도 기준 — 다음 관수 예상 시간</div>
+  <div class="pred-bar-wrap"><div class="pred-bar-fill" id="pred-fill"></div></div>
 </div>
 
-<!-- ── Stats summary ───────────────────────────────────────── -->
-<div class="stats-strip">
-  <div class="stat-card">
-    <div class="sc-val" id="sc-avg">45%</div>
-    <div class="sc-lbl">평균 토양 수분</div>
+<!-- Summary stats -->
+<div class="stats-row">
+  <div class="stat-mini card">
+    <div class="smv" id="sc-avg">—</div>
+    <div class="sml" data-ko="평균 토양 수분" data-en="Avg Soil Moisture">평균 토양 수분</div>
   </div>
-  <div class="stat-card">
-    <div class="sc-val" id="sc-irr">12회</div>
-    <div class="sc-lbl">총 관수 횟수</div>
+  <div class="stat-mini card">
+    <div class="smv" id="sc-irr">—</div>
+    <div class="sml" data-ko="총 관수 횟수" data-en="Total Irrigations">총 관수 횟수</div>
   </div>
-  <div class="stat-card">
-    <div class="sc-sub" id="sc-disease" style="font-size:1rem;font-weight:800;color:var(--green)">초기잎마름병</div>
-    <div class="sc-lbl">가장 많이 감지된 질병</div>
+  <div class="stat-mini card">
+    <div class="sms" id="sc-disease" style="font-size:1rem;font-weight:800;color:var(--accent)">—</div>
+    <div class="sml" data-ko="가장 많이 감지된 질병" data-en="Most Detected Disease">가장 많이 감지된 질병</div>
   </div>
-  <div class="stat-card">
-    <div class="sc-val" id="sc-interval">8시간</div>
-    <div class="sc-lbl">평균 관수 간격</div>
-  </div>
-</div>
-
-<!-- ── Main chart (moisture trend) ────────────────────────── -->
-<div class="card">
-  <div class="card-hd">
-    <div class="icon-box">📉</div>
-    <h3>토양 수분 트렌드</h3>
-    <div class="hd-right" id="chart-range-label" style="margin-left:auto">24시간</div>
-  </div>
-  <div class="card-bd">
-    <div class="chart-wrap" style="height:220px">
-      <canvas id="moistureTrendChart"></canvas>
-    </div>
+  <div class="stat-mini card">
+    <div class="smv" id="sc-interval">—</div>
+    <div class="sml" data-ko="평균 관수 간격" data-en="Avg Irrigation Interval">평균 관수 간격</div>
   </div>
 </div>
 
-<!-- ── Two-column charts ───────────────────────────────────── -->
-<div class="analytics-grid">
-  <div class="card">
-    <div class="card-hd"><div class="icon-box">📊</div><h3>관수 빈도</h3></div>
-    <div class="card-bd">
-      <div class="chart-wrap" style="height:200px">
-        <canvas id="irrBarChart"></canvas>
-      </div>
-    </div>
+<!-- Main trend chart -->
+<div class="card cl-green">
+  <div class="card-label" style="display:flex;align-items:center;justify-content:space-between">
+    <span data-ko="토양 수분 트렌드" data-en="Soil Moisture Trend">토양 수분 트렌드</span>
+    <span id="chart-range-lbl" style="font-size:.62rem;color:var(--text-3)">24시간</span>
   </div>
-  <div class="card">
-    <div class="card-hd"><div class="icon-box">🥧</div><h3>질병 감지 이력</h3></div>
-    <div class="card-bd">
-      <div class="chart-wrap" style="height:200px">
-        <canvas id="diseasePieChart"></canvas>
-      </div>
-    </div>
+  <div class="chart-wrap" style="height:220px"><canvas id="trendChart"></canvas></div>
+</div>
+
+<!-- Analytics pair -->
+<div class="analytics-pair">
+  <div class="card cl-none">
+    <div class="card-label" data-ko="관수 빈도" data-en="Irrigation Frequency">관수 빈도</div>
+    <div class="chart-wrap" style="height:190px"><canvas id="irrChart"></canvas></div>
+  </div>
+  <div class="card cl-none">
+    <div class="card-label" data-ko="질병 감지 이력" data-en="Disease Detection History">질병 감지 이력</div>
+    <div class="chart-wrap" style="height:190px"><canvas id="pieChart"></canvas></div>
   </div>
 </div>
 
@@ -80,121 +65,77 @@
 
 {% block scripts %}
 <script>
-let trendChart=null, barChart=null, pieChart=null;
-let currentData=null;
-
-const RANGE_LABELS = {"24h":"24시간","7d":"7일","30d":"30일"};
+let trendChart=null, irrChart=null, pieChart=null;
+const RANGE_LABELS = {"24h": {ko:"24시간",en:"24h"}, "7d":{ko:"7일",en:"7d"}, "30d":{ko:"30일",en:"30d"}};
 
 function initCharts(d) {
-  currentData = d;
-  const green = "#2d8a4e";
-
+  const g = "#3D7A4F";
   // Trend
   if (trendChart) {
-    trendChart.data.labels = d.labels;
-    trendChart.data.datasets[0].data = d.moisture;
-    trendChart.update();
+    trendChart.data.labels = d.labels; trendChart.data.datasets[0].data = d.moisture; trendChart.update();
   } else {
-    const ctx = document.getElementById("moistureTrendChart").getContext("2d");
+    const ctx = document.getElementById("trendChart").getContext("2d");
+    const grad = ctx.createLinearGradient(0,0,0,200);
+    grad.addColorStop(0,"rgba(61,122,79,.15)"); grad.addColorStop(1,"rgba(61,122,79,0)");
     trendChart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: d.labels,
-        datasets: [{
-          label:"수분 ADC", data:d.moisture,
-          borderColor:green, backgroundColor:"rgba(45,138,78,.1)",
-          borderWidth:2.5, tension:0.4, fill:true,
-          pointRadius:3, pointBackgroundColor:green,
-        }],
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          x:{grid:{color:"rgba(0,0,0,.04)"},ticks:{font:{size:10},maxTicksLimit:10}},
-          y:{min:0,max:1023,grid:{color:"rgba(0,0,0,.04)"},ticks:{font:{size:10}}},
-        },
-      },
+      type:"line",
+      data:{labels:d.labels,datasets:[{label:"ADC",data:d.moisture,borderColor:g,backgroundColor:grad,borderWidth:2,tension:0.4,fill:true,pointRadius:2,pointBackgroundColor:g}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:1200},plugins:{legend:{display:false}},
+        scales:{x:{grid:{color:"rgba(0,0,0,.04)"},ticks:{font:{size:10},maxTicksLimit:10}},y:{min:0,max:1023,grid:{color:"rgba(0,0,0,.04)"},ticks:{font:{size:10}}}}},
     });
   }
-
   // Bar
-  if (barChart) {
-    barChart.data.labels = d.labels;
-    barChart.data.datasets[0].data = d.irrigation;
-    barChart.update();
+  if (irrChart) {
+    irrChart.data.labels = d.labels; irrChart.data.datasets[0].data = d.irrigation; irrChart.update();
   } else {
-    const ctx = document.getElementById("irrBarChart").getContext("2d");
-    barChart = new Chart(ctx, {
+    const ctx = document.getElementById("irrChart").getContext("2d");
+    irrChart = new Chart(ctx, {
       type:"bar",
-      data:{
-        labels:d.labels,
-        datasets:[{label:"관수 횟수", data:d.irrigation, backgroundColor:"rgba(45,138,78,.7)", borderRadius:5}],
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:10}},
-          y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}},grid:{color:"rgba(0,0,0,.04)"}},
-        },
-      },
+      data:{labels:d.labels,datasets:[{data:d.irrigation,backgroundColor:"rgba(61,122,79,.65)",borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:900},plugins:{legend:{display:false}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:10}},y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}},grid:{color:"rgba(0,0,0,.04)"}}}},
     });
   }
-
-  // Pie (static mock, independent of time range)
+  // Pie
   if (!pieChart) {
-    const ctx = document.getElementById("diseasePieChart").getContext("2d");
+    const ctx = document.getElementById("pieChart").getContext("2d");
     pieChart = new Chart(ctx, {
       type:"doughnut",
-      data:{
-        labels: d.disease_labels,
-        datasets:[{
-          data: d.disease_values,
-          backgroundColor:["#86efac","#fca5a5","#fde68a","#bfdbfe"],
-          borderWidth:2, borderColor:"#fff",
-        }],
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{position:"bottom",labels:{font:{size:11},padding:10}}},
-      },
+      data:{labels:d.disease_labels,datasets:[{data:d.disease_values,backgroundColor:["#86EFAC","#FCA5A5","#FDE68A","#BFDBFE"],borderWidth:2,borderColor:"#fff"}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:{duration:1000},plugins:{legend:{position:"bottom",labels:{font:{size:10},padding:10}}}},
     });
   }
-
   // Stats
+  const lang = localStorage.getItem("greennode-lang") || "ko";
   document.getElementById("sc-avg").textContent      = d.summary.avg_moisture + "%";
-  document.getElementById("sc-irr").textContent      = d.summary.total_irrigations + "회";
+  document.getElementById("sc-irr").textContent      = d.summary.total_irrigations + (lang==="ko"?"회":"x");
   document.getElementById("sc-disease").textContent  = d.summary.top_disease;
-  document.getElementById("sc-interval").textContent = d.summary.avg_interval + "시간";
+  document.getElementById("sc-interval").textContent = d.summary.avg_interval + (lang==="ko"?"시간":"h");
+  document.getElementById("chart-range-lbl").textContent = RANGE_LABELS[currentRange][lang];
 }
 
+let currentRange = "24h";
 async function loadAnalytics(range) {
+  currentRange = range;
   const r = await fetch(`/api/analytics?range=${range}`).catch(()=>null);
-  if (!r) return;
-  initCharts(await r.json());
-  document.getElementById("chart-range-label").textContent = RANGE_LABELS[range];
+  if (r) initCharts(await r.json());
 }
 
-// Tab clicks
-document.querySelectorAll(".tab-btn").forEach(btn => {
+document.querySelectorAll(".ptab").forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".ptab").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
     loadAnalytics(btn.dataset.range);
   });
 });
 
-// Prediction animation
-function animatePrediction() {
-  const fill = document.getElementById("pred-fill");
-  const times = ["약 2시간 후","약 3시간 후","약 4시간 후","약 5시간 후"];
-  const widths = ["80%","65%","50%","35%"];
-  const idx = Math.floor(Math.random() * times.length);
-  document.getElementById("pred-time").textContent = times[idx];
-  fill.style.width = widths[idx];
-}
-animatePrediction();
+// Prediction randomise
+const times = {ko:["약 2시간 후","약 3시간 후","약 4시간 후","약 5시간 후"], en:["~2 hours","~3 hours","~4 hours","~5 hours"]};
+const widths = ["80%","65%","50%","35%"];
+const idx = Math.floor(Math.random() * times.ko.length);
+const lang = localStorage.getItem("greennode-lang") || "ko";
+document.getElementById("pred-time").textContent = times[lang][idx];
+document.getElementById("pred-fill").style.width = widths[idx];
 
 loadAnalytics("24h");
 </script>
