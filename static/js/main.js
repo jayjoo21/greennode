@@ -35,7 +35,10 @@ function unsplashUrl(p, size = "400x400") {
 }
 
 // ── Language system ───────────────────────────────────────────
-let currentLang = "ko";
+// Read from localStorage immediately — before any DOM event fires
+const savedLang = localStorage.getItem("greennode-lang") || "ko";
+document.documentElement.setAttribute("data-lang", savedLang);
+let currentLang = savedLang;
 
 function applyLang(lang) {
   currentLang = lang;
@@ -63,17 +66,16 @@ function applyLang(lang) {
 }
 
 function initLang() {
-  const saved = localStorage.getItem("greennode-lang") || "ko";
-  // Apply immediately without animation on first load
+  // currentLang is already set from localStorage at module load time
   document.querySelectorAll("[data-ko]").forEach(el => {
-    const v = saved === "ko" ? el.dataset.ko : el.dataset.en;
+    const v = currentLang === "ko" ? el.dataset.ko : el.dataset.en;
     if (v !== undefined) el.textContent = v;
   });
   document.querySelectorAll(".lang-btn").forEach(b => {
-    b.classList.toggle("active", b.dataset.lang === saved);
+    b.classList.toggle("active", b.dataset.lang === currentLang);
   });
-  currentLang = saved;
-  document.documentElement.lang = saved === "ko" ? "ko" : "en";
+  document.documentElement.lang = currentLang === "ko" ? "ko" : "en";
+  document.documentElement.setAttribute("data-lang", currentLang);
 }
 
 function initLangToggle() {

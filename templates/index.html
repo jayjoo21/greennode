@@ -16,7 +16,6 @@
   <p class="hero-sci" id="hero-sci">Solanum lycopersicum</p>
   <div class="hero-badges">
     <span class="hero-badge danger" id="hero-sev-badge">위험 감지</span>
-    <span class="hero-badge warning" id="hero-mst-badge">건조</span>
   </div>
 </section>
 
@@ -298,8 +297,9 @@ async function pollSensor() {
 
   const led = document.getElementById("pump-led");
   led.className = `pump-led ${d.pump_on ? "on" : ""}`;
+  const pumpStatusText = currentLang === "ko" ? (d.pump_on ? "작동 중" : "대기 중") : (d.pump_on ? "Running" : "Standby");
   document.getElementById("pump-text").innerHTML =
-    `<span data-ko="${d.pump_on ? "작동 중":"대기 중"}" data-en="${d.pump_on ? "Running":"Standby"}">${d.pump_on ? "작동 중":"대기 중"}</span><span style="font-weight:400;color:var(--text-2);font-size:.75rem;margin-left:4px" data-ko="펌프" data-en="Pump">펌프</span>`;
+    `<span data-ko="${d.pump_on ? "작동 중":"대기 중"}" data-en="${d.pump_on ? "Running":"Standby"}">${pumpStatusText}</span><span style="font-weight:400;color:var(--text-2);font-size:.75rem;margin-left:4px" data-ko="펌프" data-en="Pump">${currentLang==="ko"?"펌프":"Pump"}</span>`;
   document.getElementById("last-watered").textContent = d.last_watered;
 
   document.getElementById("live-disease").textContent = d.label_kr;
@@ -307,14 +307,9 @@ async function pollSensor() {
   const ls = document.getElementById("live-sev");
   ls.textContent = severityKr(d.severity); ls.className = `sev-pill ${d.severity}`;
 
-  // Hero badges
+  // Hero badge — severity only
   const hs = document.getElementById("hero-sev-badge");
-  const hm = document.getElementById("hero-mst-badge");
   if (hs) { hs.textContent = severityKr(d.severity); setSevBadge(hs, d.severity); }
-  if (hm) {
-    hm.textContent = statusKr(d.moisture_status);
-    hm.className = `hero-badge ${d.moisture_status === "wet" ? "success" : d.moisture_status === "normal" ? "success" : "warning"}`;
-  }
 }
 
 // Upload
@@ -364,8 +359,8 @@ irrBtn.addEventListener("click", async () => {
     setTimeout(()=>msg.style.display="none", 4000);
   }
   irrBtn.disabled = false;
-  irrBtn.innerHTML = `<span data-ko="💧 지금 관수" data-en="💧 Water Now">💧 지금 관수</span>`;
-  initLang(); // re-apply language to newly created span
+  const btnText = currentLang === "ko" ? "💧 지금 관수" : "💧 Water Now";
+  irrBtn.innerHTML = `<span data-ko="💧 지금 관수" data-en="💧 Water Now">${btnText}</span>`;
 });
 
 // QR
@@ -374,14 +369,6 @@ async function loadQR() {
   if (!r) return;
   const d = await r.json();
   if (d.qr) { document.getElementById("qr-img").src=d.qr; document.getElementById("qr-url").textContent=d.url; }
-}
-
-function initLang() {
-  const lang = localStorage.getItem("greennode-lang") || "ko";
-  document.querySelectorAll("[data-ko]").forEach(el => {
-    const v = lang === "ko" ? el.dataset.ko : el.dataset.en;
-    if (v !== undefined) el.textContent = v;
-  });
 }
 
 (async () => {
