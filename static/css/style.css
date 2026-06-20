@@ -388,10 +388,9 @@ body.fade-out {
    STATS BAR  (72px)
    ════════════════════════════════════════════════════════════ */
 .stats-bar {
-  height: 72px;
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
 }
 .stat-pill {
@@ -926,7 +925,7 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
   .topbar { padding: 0 16px 0 56px; }
   .page-body { padding: 12px 14px; }
   .cards-grid { grid-template-columns: 1fr; height: auto; }
-  .stats-bar { grid-template-columns: 1fr 1fr; height: auto; }
+  .stats-bar { grid-template-columns: repeat(3, 1fr); }
   .stat-pill { height: 62px; }
   .adc-num { font-size: 48px; }
 }
