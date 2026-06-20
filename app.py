@@ -2,12 +2,14 @@ import os, io, random, base64, sqlite3
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, url_for
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 app = Flask(__name__)
-app.config["UPLOAD_FOLDER"] = "uploads"
+app.config["UPLOAD_FOLDER"] = os.path.join(BASE_DIR, "uploads")
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 ALLOWED = {"png", "jpg", "jpeg", "gif", "webp"}
 
-DB_PATH = "greennnode.db"
+DB_PATH = os.path.join(BASE_DIR, "greennnode.db")
 
 # ═══════════════════════════════════════════════════════════════
 # MOCK DATA — replace every section marked # MOCK with real data
@@ -70,7 +72,8 @@ def get_dht11():
 # ── SQLite helpers ────────────────────────────────────────────────────────────
 
 def get_db():
-    db = sqlite3.connect(DB_PATH)
+    db = sqlite3.connect(DB_PATH, timeout=10)
+    db.execute("PRAGMA journal_mode=WAL")  # safe for multiple gunicorn workers
     db.row_factory = sqlite3.Row
     return db
 
@@ -147,9 +150,12 @@ def init_db():
     db.close()
 
 
-init_db()
+try:
+    init_db()
+except Exception as _e:
+    print(f"[WARN] init_db failed: {_e}", flush=True)
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-os.makedirs(os.path.join("static", "qr"), exist_ok=True)
+os.makedirs(os.path.join(BASE_DIR, "static", "qr"), exist_ok=True)
 # ─────────────────────────────────────────────────────────────────────────────
 
 
