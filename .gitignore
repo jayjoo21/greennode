@@ -20,6 +20,9 @@ instance/
 server.log
 server_err.log
 
+# SQLite DB (runtime-generated, not deployed)
+greennnode.db
+
 # OS
 .DS_Store
 Thumbs.db
