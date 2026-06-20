@@ -56,16 +56,6 @@ diagnosis_history = [          # MOCK — replace with DB query
 ]
 pump_state = {"on": False}
 
-def get_dht11():
-    """MOCK — replace body with real DHT11 read when sensor is wired:
-       import Adafruit_DHT
-       _, temp, hum = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, GPIO_PIN)
-       return {"temperature": round(temp, 1), "humidity": round(hum, 1)}
-    """
-    return {
-        "temperature": round(24.0 + random.uniform(-2.0, 2.0), 1),
-        "humidity":    round(60.0 + random.uniform(-10.0, 10.0), 1),
-    }
 # ═══════════════════════════════════════════════════════════════
 
 
@@ -220,12 +210,9 @@ def api_sensor():
     # MOCK DATA — replace with real sensor reads
     m   = max(0, min(1023, MOCK_SENSOR_BASE["moisture"] + random.randint(-25, 25)))
     c   = MOCK_AI_BASE["confidence"]
-    dht = get_dht11()
     return jsonify(
         moisture=m, moisture_pct=round(m / 1023 * 100, 1),
         moisture_status=moisture_status(m),
-        temperature=dht["temperature"],
-        humidity=dht["humidity"],
         disease=MOCK_AI_BASE["disease"], confidence=c,
         label_kr=MOCK_AI_BASE["label_kr"], severity=severity_label(c),
         pump_on=pump_state["on"], last_watered=get_last_watered(),

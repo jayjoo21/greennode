@@ -390,7 +390,7 @@ body.fade-out {
 .stats-bar {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 .stat-pill {

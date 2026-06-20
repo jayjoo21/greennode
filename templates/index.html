@@ -29,14 +29,6 @@
     <span class="sp-lbl" data-ko="토양 수분" data-en="Soil Moisture">토양 수분</span>
   </div>
   <div class="stat-pill">
-    <span class="sp-val" id="ov-temp">24°C</span>
-    <span class="sp-lbl" data-ko="온도" data-en="Temperature">온도</span>
-  </div>
-  <div class="stat-pill">
-    <span class="sp-val" id="ov-humidity">—%</span>
-    <span class="sp-lbl" data-ko="습도" data-en="Humidity">습도</span>
-  </div>
-  <div class="stat-pill">
     <span class="sp-val" id="ov-sev" style="font-size:17px">위험 🔴</span>
     <span class="sp-lbl" data-ko="진단 상태" data-en="Diagnosis">진단 상태</span>
   </div>
@@ -137,16 +129,6 @@
       </div>
     </div>
 
-    <div class="threshold-list" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
-      <div class="threshold-row">
-        <span data-ko="🌡 온도 (DHT11)" data-en="🌡 Temperature (DHT11)">🌡 온도 (DHT11)</span>
-        <span class="tv" id="sensor-temp">—</span>
-      </div>
-      <div class="threshold-row">
-        <span data-ko="💦 습도 (DHT11)" data-en="💦 Humidity (DHT11)">💦 습도 (DHT11)</span>
-        <span class="tv" id="sensor-hum">—</span>
-      </div>
-    </div>
   </div>
 
   <!-- Card 3: Irrigation Control -->
@@ -283,10 +265,6 @@ async function pollSensor() {
     document.getElementById('ov-moisture').textContent   = d.moisture_pct + '%';
   }
   document.getElementById('m-pct').textContent        = d.moisture_pct + '%';
-  document.getElementById('ov-temp').textContent      = d.temperature + '°C';
-  document.getElementById('ov-humidity').textContent  = d.humidity + '%';
-  document.getElementById('sensor-temp').textContent  = d.temperature + '°C';
-  document.getElementById('sensor-hum').textContent   = d.humidity + '%';
   document.getElementById('ov-sev').textContent       = severityKr(d.severity);
   document.getElementById('ov-watered').textContent = d.last_watered;
 
