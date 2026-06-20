@@ -17,7 +17,7 @@ DB_PATH = os.path.join(BASE_DIR, "greennnode.db")
 
 MOCK_AI_BASE = {               # MOCK — real model inference (TF / ONNX)
     "disease":    "Pepper__bacterial_spot",
-    "confidence": 88.5,
+    "confidence": 91.0,
     "label_kr":   "세균점무늬병",
 }
 MOCK_SENSOR_BASE = {           # MOCK — real ADC / I2C sensor read
@@ -161,7 +161,7 @@ os.makedirs(os.path.join(BASE_DIR, "static", "qr"), exist_ok=True)
 
 def allowed(fn): return "." in fn and fn.rsplit(".", 1)[1].lower() in ALLOWED
 def moisture_status(v):
-    return "wet" if v < 300 else "normal" if v < 700 else "dry"
+    return "dry" if v < 300 else "normal" if v < 700 else "wet"
 def severity_label(c):
     return "normal" if c < 60 else "caution" if c <= 85 else "critical"
 def decide_irrigation(ai, m):
@@ -219,7 +219,7 @@ def alerts():
 def api_sensor():
     # MOCK DATA — replace with real sensor reads
     m   = max(0, min(1023, MOCK_SENSOR_BASE["moisture"] + random.randint(-25, 25)))
-    c   = round(max(0, min(100, MOCK_AI_BASE["confidence"] + random.uniform(-1.5, 1.5))), 1)
+    c   = MOCK_AI_BASE["confidence"]
     dht = get_dht11()
     return jsonify(
         moisture=m, moisture_pct=round(m / 1023 * 100, 1),
@@ -312,7 +312,7 @@ def api_upload():
     f.save(os.path.join(app.config["UPLOAD_FOLDER"],
            f"leaf_{datetime.now().strftime('%Y%m%d_%H%M%S')}{os.path.splitext(f.filename)[1]}"))
     # MOCK DATA — replace with real model inference
-    c = round(MOCK_AI_BASE["confidence"] + random.uniform(-2, 2), 1)
+    c = MOCK_AI_BASE["confidence"]
     return jsonify(disease=MOCK_AI_BASE["disease"], confidence=c,
                    label_kr=MOCK_AI_BASE["label_kr"], severity=severity_label(c))
 
