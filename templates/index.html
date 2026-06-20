@@ -9,13 +9,13 @@
   <div class="hero-img-wrap">
     <div class="hero-glow"></div>
     <div class="hero-ring">
-      <span id="hero-emoji">🍅</span>
+      <span id="hero-emoji">🌶️</span>
       <img id="hero-img" alt="plant" />
     </div>
   </div>
   <div class="hero-info">
-    <h2 class="hero-plant-name" id="hero-plant-name">토마토</h2>
-    <p class="hero-sci" id="hero-sci">Solanum lycopersicum</p>
+    <h2 class="hero-plant-name" id="hero-plant-name">고추</h2>
+    <p class="hero-sci" id="hero-sci">Capsicum annuum</p>
   </div>
   <div class="hero-badges">
     <span class="hero-badge danger" id="hero-sev-badge">위험</span>
@@ -31,6 +31,10 @@
   <div class="stat-pill">
     <span class="sp-val" id="ov-temp">24°C</span>
     <span class="sp-lbl" data-ko="온도" data-en="Temperature">온도</span>
+  </div>
+  <div class="stat-pill">
+    <span class="sp-val" id="ov-humidity">—%</span>
+    <span class="sp-lbl" data-ko="습도" data-en="Humidity">습도</span>
   </div>
   <div class="stat-pill">
     <span class="sp-val" id="ov-sev" style="font-size:17px">위험 🔴</span>
@@ -130,6 +134,17 @@
       <div class="threshold-row">
         <span data-ko="💧 습함 기준" data-en="💧 Wet threshold">💧 습함 기준</span>
         <span class="tv">ADC ≥ 700</span>
+      </div>
+    </div>
+
+    <div class="threshold-list" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
+      <div class="threshold-row">
+        <span data-ko="🌡 온도 (DHT11)" data-en="🌡 Temperature (DHT11)">🌡 온도 (DHT11)</span>
+        <span class="tv" id="sensor-temp">—</span>
+      </div>
+      <div class="threshold-row">
+        <span data-ko="💦 습도 (DHT11)" data-en="💦 Humidity (DHT11)">💦 습도 (DHT11)</span>
+        <span class="tv" id="sensor-hum">—</span>
       </div>
     </div>
   </div>
@@ -267,9 +282,12 @@ async function pollSensor() {
     document.getElementById('m-adc').textContent         = d.moisture;
     document.getElementById('ov-moisture').textContent   = d.moisture_pct + '%';
   }
-  document.getElementById('m-pct').textContent   = d.moisture_pct + '%';
-  document.getElementById('ov-temp').textContent  = d.temperature + '°C';
-  document.getElementById('ov-sev').textContent   = severityKr(d.severity);
+  document.getElementById('m-pct').textContent        = d.moisture_pct + '%';
+  document.getElementById('ov-temp').textContent      = d.temperature + '°C';
+  document.getElementById('ov-humidity').textContent  = d.humidity + '%';
+  document.getElementById('sensor-temp').textContent  = d.temperature + '°C';
+  document.getElementById('sensor-hum').textContent   = d.humidity + '%';
+  document.getElementById('ov-sev').textContent       = severityKr(d.severity);
   document.getElementById('ov-watered').textContent = d.last_watered;
 
   const fill = document.getElementById('gauge-fill');

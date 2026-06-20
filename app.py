@@ -1,4 +1,4 @@
-import os, io, random, base64
+import os, io, random, base64, sqlite3
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, url_for
 
@@ -7,30 +7,27 @@ app.config["UPLOAD_FOLDER"] = "uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 ALLOWED = {"png", "jpg", "jpeg", "gif", "webp"}
 
+DB_PATH = "greennnode.db"
+
 # ═══════════════════════════════════════════════════════════════
 # MOCK DATA — replace every section marked # MOCK with real data
 # ═══════════════════════════════════════════════════════════════
 
 MOCK_AI_BASE = {               # MOCK — real model inference (TF / ONNX)
-    "disease":    "Tomato_Early_blight",
+    "disease":    "Pepper__bacterial_spot",
     "confidence": 88.5,
-    "label_kr":   "초기 잎마름병",
+    "label_kr":   "세균점무늬병",
 }
 MOCK_SENSOR_BASE = {           # MOCK — real ADC / I2C sensor read
-    "moisture":    327,
-    "temperature": 24,
-}
-MOCK_PUMP = {                  # MOCK — real GPIO pump controller
-    "last_watered": "2026-05-29 16:03",
-    "duration":     5,
+    "moisture": 327,
 }
 MOCK_ALERTS = [                # MOCK — replace with DB (SQLite / Postgres)
-    {"id":1,"level":"critical","title":"초기 잎마름병 감지","desc":"신뢰도 88.5%로 병해가 감지되었습니다.","time":"16:03","date":"2026-05-29","type":"disease","read":False},
-    {"id":2,"level":"warning", "title":"토양 수분 낮음",   "desc":"ADC 327 — 관수가 필요합니다.",        "time":"15:47","date":"2026-05-29","type":"water",  "read":False},
-    {"id":3,"level":"info",    "title":"자동 관수 완료",   "desc":"5초간 관수가 완료되었습니다.",         "time":"15:34","date":"2026-05-29","type":"system", "read":True },
-    {"id":4,"level":"warning", "title":"토양 수분 낮음",   "desc":"ADC 298 — 건조 상태입니다.",           "time":"09:15","date":"2026-05-29","type":"water",  "read":True },
-    {"id":5,"level":"critical","title":"세균 점무늬병 의심","desc":"신뢰도 72.3%로 병해가 의심됩니다.",   "time":"08:42","date":"2026-05-28","type":"disease","read":True },
-    {"id":6,"level":"info",    "title":"센서 연결 확인",   "desc":"토양 센서가 정상 연결되었습니다.",     "time":"07:00","date":"2026-05-28","type":"system", "read":True },
+    {"id":1,"level":"critical","title":"세균점무늬병 감지",  "desc":"신뢰도 88.5%로 병해가 감지되었습니다.", "time":"16:03","date":"2026-06-19","type":"disease","read":False},
+    {"id":2,"level":"warning", "title":"토양 수분 낮음",    "desc":"ADC 327 — 관수가 필요합니다.",          "time":"15:47","date":"2026-06-19","type":"water",  "read":False},
+    {"id":3,"level":"info",    "title":"자동 관수 완료",    "desc":"5초간 관수가 완료되었습니다.",           "time":"15:34","date":"2026-06-19","type":"system", "read":True },
+    {"id":4,"level":"warning", "title":"토양 수분 낮음",    "desc":"ADC 298 — 건조 상태입니다.",             "time":"09:15","date":"2026-06-19","type":"water",  "read":True },
+    {"id":5,"level":"critical","title":"세균점무늬병 의심", "desc":"신뢰도 72.3%로 병해가 의심됩니다.",     "time":"08:42","date":"2026-06-18","type":"disease","read":True },
+    {"id":6,"level":"info",    "title":"센서 연결 확인",    "desc":"토양 센서가 정상 연결되었습니다.",       "time":"07:00","date":"2026-06-18","type":"system", "read":True },
 ]
 MOCK_SETTINGS = {              # MOCK — replace with config file / DB
     "dry_threshold":         300,
@@ -40,39 +37,118 @@ MOCK_SETTINGS = {              # MOCK — replace with config file / DB
     "auto_irrigation":       True,
     "confidence_threshold":  60,
 }
-irrigation_history = [         # MOCK — replace with DB query
-    {
-        "time":            (datetime.now() - timedelta(hours=h)).strftime("%m/%d %H:%M"),
-        "duration":        d,
-        "reason":          r,
-        "moisture_before": mb,
-        "moisture_after":  ma,
-    }
-    for h, d, r, mb, ma in [
-        (1,  5, "정상 + 건조",      302, 580),
-        (5,  2, "병해 감지 + 건조", 285, 420),
-        (10, 5, "정상 + 건조",      290, 600),
-        (18, 0, "습함 — 관수 없음", 750, 750),
-        (23, 5, "정상 + 건조",      310, 590),
-    ]
-]
 diagnosis_history = [          # MOCK — replace with DB query
     {
         "date":   (datetime.now() - timedelta(hours=h)).strftime("%Y-%m-%d"),
         "time":   (datetime.now() - timedelta(hours=h)).strftime("%H:%M"),
-        "plant":  "토마토",
+        "plant":  "고추",
         "result": r, "conf": c, "action": a, "level": l,
     }
     for h, r, c, a, l in [
-        (2,  "초기 잎마름병",  88.5, "관수 절수 처리", "critical"),
-        (6,  "정상",           40.2, "정상 관수",       "normal"),
-        (26, "세균 점무늬",    72.3, "관수 중단",       "warning"),
-        (50, "잎 곰팡이병",    65.1, "관수 절수 처리",  "warning"),
-        (74, "정상",           35.8, "정상 관수",       "normal"),
+        (2,  "세균점무늬병", 88.5, "관수 절수 처리", "critical"),
+        (6,  "정상",         40.2, "정상 관수",       "normal"),
+        (26, "세균점무늬병", 72.3, "관수 중단",       "warning"),
+        (50, "세균점무늬병", 65.1, "관수 절수 처리",  "warning"),
+        (74, "정상",         35.8, "정상 관수",       "normal"),
     ]
 ]
-pump_state = {"on": False, "last_watered": MOCK_PUMP["last_watered"]}
+pump_state = {"on": False}
+
+def get_dht11():
+    """MOCK — replace body with real DHT11 read when sensor is wired:
+       import Adafruit_DHT
+       _, temp, hum = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, GPIO_PIN)
+       return {"temperature": round(temp, 1), "humidity": round(hum, 1)}
+    """
+    return {
+        "temperature": round(24.0 + random.uniform(-2.0, 2.0), 1),
+        "humidity":    round(60.0 + random.uniform(-10.0, 10.0), 1),
+    }
 # ═══════════════════════════════════════════════════════════════
+
+
+# ── SQLite helpers ────────────────────────────────────────────────────────────
+
+def get_db():
+    db = sqlite3.connect(DB_PATH)
+    db.row_factory = sqlite3.Row
+    return db
+
+
+def _row_to_dict(row):
+    """Convert an irrigation_log row to the display dict the templates/API expect."""
+    try:
+        dt = datetime.strptime(row["watered_at"], "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        dt = datetime.strptime(row["watered_at"], "%Y-%m-%d %H:%M")
+    return {
+        "time":             dt.strftime("%m/%d %H:%M"),
+        "duration":         row["duration"],
+        "reason":           row["reason"],
+        "moisture_before":  row["moisture_before"],
+        "moisture_after":   row["moisture_after"],
+    }
+
+
+def get_last_watered():
+    db = get_db()
+    row = db.execute("SELECT MAX(watered_at) AS lw FROM irrigation_log").fetchone()
+    db.close()
+    lw = row["lw"] if row else None
+    if not lw:
+        return "기록 없음"
+    try:
+        return datetime.strptime(lw, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M")
+    except ValueError:
+        return lw
+
+
+def get_irrigation_history(limit=5):
+    db = get_db()
+    rows = db.execute(
+        "SELECT * FROM irrigation_log ORDER BY watered_at DESC LIMIT ?", (limit,)
+    ).fetchall()
+    db.close()
+    return [_row_to_dict(r) for r in rows]
+
+
+def init_db():
+    db = get_db()
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS irrigation_log (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            watered_at      TEXT    NOT NULL,
+            duration        INTEGER NOT NULL,
+            reason          TEXT    NOT NULL,
+            moisture_before INTEGER,
+            moisture_after  INTEGER
+        )
+    """)
+    db.commit()
+
+    if db.execute("SELECT COUNT(*) FROM irrigation_log").fetchone()[0] == 0:
+        now = datetime.now()
+        seeds = [
+            (1,  5, "정상 + 건조",      302, 580),
+            (5,  2, "병해 감지 + 건조", 285, 420),
+            (10, 5, "정상 + 건조",      290, 600),
+            (18, 0, "습함 — 관수 없음", 750, 750),
+            (23, 5, "정상 + 건조",      310, 590),
+        ]
+        db.executemany(
+            "INSERT INTO irrigation_log (watered_at, duration, reason, moisture_before, moisture_after)"
+            " VALUES (?,?,?,?,?)",
+            [
+                ((now - timedelta(hours=h)).strftime("%Y-%m-%d %H:%M:%S"), d, r, mb, ma)
+                for h, d, r, mb, ma in seeds
+            ],
+        )
+        db.commit()
+    db.close()
+
+
+init_db()
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 def allowed(fn): return "." in fn and fn.rsplit(".", 1)[1].lower() in ALLOWED
@@ -118,7 +194,7 @@ def analytics():
 @app.route("/history")
 def history():
     return render_template("history.html", page="history",
-        irrigation_history=irrigation_history,
+        irrigation_history=get_irrigation_history(limit=100),
         diagnosis_history=diagnosis_history)
 
 @app.route("/settings")
@@ -133,17 +209,18 @@ def alerts():
 # ── API ──────────────────────────────────────────────────────────────────────
 @app.route("/api/sensor")
 def api_sensor():
-    # MOCK DATA — replace with real sensor read
-    m = max(0, min(1023, MOCK_SENSOR_BASE["moisture"] + random.randint(-25, 25)))
-    c = round(max(0, min(100, MOCK_AI_BASE["confidence"] + random.uniform(-1.5, 1.5))), 1)
-    t = round(MOCK_SENSOR_BASE["temperature"] + random.uniform(-0.5, 0.5), 1)
+    # MOCK DATA — replace with real sensor reads
+    m   = max(0, min(1023, MOCK_SENSOR_BASE["moisture"] + random.randint(-25, 25)))
+    c   = round(max(0, min(100, MOCK_AI_BASE["confidence"] + random.uniform(-1.5, 1.5))), 1)
+    dht = get_dht11()
     return jsonify(
         moisture=m, moisture_pct=round(m / 1023 * 100, 1),
         moisture_status=moisture_status(m),
-        temperature=t,
+        temperature=dht["temperature"],
+        humidity=dht["humidity"],
         disease=MOCK_AI_BASE["disease"], confidence=c,
         label_kr=MOCK_AI_BASE["label_kr"], severity=severity_label(c),
-        pump_on=pump_state["on"], last_watered=pump_state["last_watered"],
+        pump_on=pump_state["on"], last_watered=get_last_watered(),
     )
 
 @app.route("/api/history/moisture")
@@ -175,10 +252,10 @@ def api_analytics():
     avg = round(sum(moisture) / len(moisture) / 1023 * 100)
     return jsonify(
         labels=labels, moisture=moisture, irrigation=irr,
-        disease_labels=["정상", "초기잎마름병", "세균점무늬", "잎곰팡이"],
-        disease_values=[45, 30, 15, 10],
+        disease_labels=["정상", "세균점무늬병"],
+        disease_values=[55, 45],
         summary={"avg_moisture": avg, "total_irrigations": sum(1 for x in irr if x > 0),
-                 "top_disease": "초기잎마름병", "avg_interval": 8},
+                 "top_disease": "세균점무늬병", "avg_interval": 8},
     )
 
 @app.route("/api/calendar")
@@ -200,19 +277,24 @@ def api_irrigate():
     d = decide_irrigation(MOCK_AI_BASE, m)
     if d["pump"]:
         pump_state["on"] = True
-        pump_state["last_watered"] = datetime.now().strftime("%Y-%m-%d %H:%M")
-        irrigation_history.insert(0, {
-            "time": datetime.now().strftime("%m/%d %H:%M"),
-            "duration": d["duration"], "reason": d["reason"],
-            "moisture_before": m, "moisture_after": min(1023, m + random.randint(180, 280)),
-        })
-        del irrigation_history[5:]
-    return jsonify(decision=d, last_watered=pump_state["last_watered"],
-                   history=irrigation_history[:5])
+        db = get_db()
+        db.execute(
+            "INSERT INTO irrigation_log (watered_at, duration, reason, moisture_before, moisture_after)"
+            " VALUES (?,?,?,?,?)",
+            (
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                d["duration"], d["reason"],
+                m, min(1023, m + random.randint(180, 280)),
+            ),
+        )
+        db.commit()
+        db.close()
+    return jsonify(decision=d, last_watered=get_last_watered(),
+                   history=get_irrigation_history())
 
 @app.route("/api/irrigation/history")
 def api_irr_history():
-    return jsonify(irrigation_history[:5])
+    return jsonify(get_irrigation_history())
 
 @app.route("/api/upload", methods=["POST"])
 def api_upload():

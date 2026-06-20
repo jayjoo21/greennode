@@ -10,9 +10,9 @@ let currentLang = _saved;
 // ── Plant data  (ko = Korean display, en = English display, english = Unsplash search key)
 const PLANTS = [
   // ✅ PlantVillage supported
+  { ko:'고추',     en:'Pepper',       english:'red pepper',   sci:'Capsicum annuum',        emoji:'🌶️', ok:true  },
   { ko:'토마토',   en:'Tomato',       english:'tomato',       sci:'Solanum lycopersicum',   emoji:'🍅', ok:true  },
   { ko:'감자',     en:'Potato',       english:'potato',       sci:'Solanum tuberosum',      emoji:'🥔', ok:true  },
-  { ko:'고추',     en:'Pepper',       english:'red pepper',   sci:'Capsicum annuum',        emoji:'🌶️', ok:true  },
   { ko:'옥수수',   en:'Corn',         english:'corn',         sci:'Zea mays',               emoji:'🌽', ok:true  },
   { ko:'포도',     en:'Grape',        english:'grape',        sci:'Vitis vinifera',         emoji:'🍇', ok:true  },
   { ko:'사과',     en:'Apple',        english:'apple',        sci:'Malus domestica',        emoji:'🍎', ok:true  },
@@ -70,7 +70,7 @@ function applySidebarState(sidebar, btn) {
 // ── Sidebar plant display ─────────────────────────────────────
 function updateSidebarPlant(plant) {
   selectedPlant = plant;
-  localStorage.setItem('gn-plant', plant.ko); // save by Korean name as stable key
+  localStorage.setItem('gn-plant-v2', plant.ko); // save by Korean name as stable key
 
   const nameEl  = document.getElementById('sb-plant-name');
   const badgeEl = document.getElementById('sb-plant-badge');
@@ -123,7 +123,7 @@ function updateSidebarPlant(plant) {
 }
 
 function loadSavedPlant() {
-  const saved = localStorage.getItem('gn-plant');
+  const saved = localStorage.getItem('gn-plant-v2');
   return PLANTS.find(p => p.ko === saved || p.en === saved) || PLANTS[0];
 }
 
