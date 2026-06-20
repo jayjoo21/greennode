@@ -148,6 +148,8 @@ def init_db():
 
 
 init_db()
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+os.makedirs(os.path.join("static", "qr"), exist_ok=True)
 # ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -349,6 +351,4 @@ def api_settings():
 
 
 if __name__ == "__main__":
-    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    os.makedirs(os.path.join("static", "qr"), exist_ok=True)
     app.run(debug=True, host="0.0.0.0", port=5000)
